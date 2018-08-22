@@ -1,5 +1,5 @@
 ### Manual ###
-#/gradle.properties
+/gradle.properties
 
 ### Default AndroidStudio gitignore ###
 *.iml
