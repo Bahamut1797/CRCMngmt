@@ -1,4 +1,4 @@
-package com.bohemiamates.crcmngmt.Models;
+package com.bohemiamates.crcmngmt.models;
 
 import java.util.List;
 

@@ -1,5 +1,6 @@
 package com.bohemiamates.crcmngmt;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -14,17 +15,32 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.bohemiamates.crcmngmt.Models.Clan;
-import com.bohemiamates.crcmngmt.Models.ClanBattles;
+import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+import com.bohemiamates.crcmngmt.models.Clan;
+import com.bohemiamates.crcmngmt.models.ClanBattle;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    private static final String URL = "https://api.royaleapi.com/";
+    private static final String API_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTUzMCwi" +
+            "aWRlbiI6IjQ3MjA3MTUzMjUxMjkzNTk1NiIsIm1kIjp7fSwidHMiOjE1MzQ4NjM2OTY4Mzh9.G391OKyRmW" +
+            "bOZ1mZRaxz--rN7yaM1J6NaAV-tDb-TQ4";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -974,12 +990,15 @@ public class MainActivity extends AppCompatActivity
         Gson gson = new GsonBuilder().create();
         Clan clan = gson.fromJson(test1, Clan.class);
 
-        Type collectionType = new TypeToken<Collection<ClanBattles>>(){}.getType();
-        Collection<ClanBattles> battles = gson.fromJson(test, collectionType);
+        Type collectionType = new TypeToken<Collection<ClanBattle>>(){}.getType();
+        Collection<ClanBattle> battles = gson.fromJson(test, collectionType);
         Log.w("*** CLAN INFO ***", clan.toString());
         Log.w("*** CLAN BATTLES ***", battles.toString());
 
+        Api api = new Api(MainActivity.this);
+        api.getJSON("RY8JVV", Api.CLAN);
     }
+
 
     @Override
     public void onBackPressed() {

@@ -1,4 +1,4 @@
-package com.bohemiamates.crcmngmt.Models;
+package com.bohemiamates.crcmngmt.models;
 
 public class Player {
     private String name;

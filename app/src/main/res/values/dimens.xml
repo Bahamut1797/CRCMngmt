@@ -5,4 +5,28 @@
     <dimen name="nav_header_vertical_spacing">8dp</dimen>
     <dimen name="nav_header_height">176dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
+
+    <!-- Slider Intro -->
+    <dimen name="dots_height">30dp</dimen>
+    <dimen name="dots_margin_bottom">20dp</dimen>
+    <dimen name="img_width_height">120dp</dimen>
+    <dimen name="slide_title">30dp</dimen>
+    <dimen name="slide_desc">16dp</dimen>
+    <dimen name="desc_padding">40dp</dimen>
+
+    <!-- CardView -->
+    <dimen name="item_offset">10dp</dimen>
+    <dimen name="detail_backdrop_height">250dp</dimen>
+    <dimen name="backdrop_title">30sp</dimen>
+    <dimen name="backdrop_subtitle">18sp</dimen>
+    <dimen name="card_margin">5dp</dimen>
+    <dimen name="card_album_radius">0dp</dimen>
+    <dimen name="food_cover_height">160dp</dimen>
+    <dimen name="food_name_padding">10dp</dimen>
+    <dimen name="food_name">15sp</dimen>
+    <dimen name="food_desc_padding_bottom">5dp</dimen>
+    <dimen name="food_desc">12sp</dimen>
+    <dimen name="ic_food_overflow_width">20dp</dimen>
+    <dimen name="ic_food_overflow_height">30dp</dimen>
+    <dimen name="ic_food_overflow_margin_top">10dp</dimen>
 </resources>

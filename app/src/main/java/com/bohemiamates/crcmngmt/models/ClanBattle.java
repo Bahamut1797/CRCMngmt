@@ -1,8 +1,9 @@
-package com.bohemiamates.crcmngmt.Models;
+package com.bohemiamates.crcmngmt.models;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class ClanBattles {
+public class ClanBattle implements Serializable {
     private String type;
     private int utcTime;
     private int winner;
@@ -69,7 +70,7 @@ public class ClanBattles {
 
     @Override
     public String toString() {
-        return "ClanBattles{" +
+        return "ClanBattle{" +
                 "type='" + type + '\'' +
                 ", utcTime=" + utcTime +
                 ", winner=" + winner +
