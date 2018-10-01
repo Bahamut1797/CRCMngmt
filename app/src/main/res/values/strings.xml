@@ -1,4 +1,7 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="key" tools:ignore="TypographyDashes">eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTUzMCwiaWRlbiI6IjQ3MjA3MTUzMjUxMjkzNTk1NiIsIm1kIjp7fSwidHMiOjE1MzQ4NjM2OTY4Mzh9.G391OKyRmWbOZ1mZRaxz--rN7yaM1J6NaAV-tDb-TQ4</string>
+    <string name="url">https://api.royaleapi.com/</string>
+
     <string name="app_name">CR - Clan Management</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -6,6 +9,9 @@
     <string name="nav_header_subtitle">android.studio@android.com</string>
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
+
+    <!-- Start activity -->
+    <string name="btnGetClan">Get Clan</string>
 
     <!-- Slider Intro -->
     <string name="next">NEXT</string>
@@ -24,6 +30,4 @@
     <string name="slide_4_title">World Travel</string>
     <string name="slide_4_desc">Book tickets of any transportation and travel the world!</string>
 
-    <string name="play_again_desc">To see the welcome slider again, goto Settings -> apps -> welcome slider -> clear data</string>
-    <string name="play_again">Play Again</string>
 </resources>
