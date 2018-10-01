@@ -23,6 +23,22 @@ public class Clan {
     @Embedded
     private Badge badge;
 
+    public Clan() {
+
+    }
+
+    public Clan(com.bohemiamates.crcmngmt.models.Clan clan) {
+        this.tag = clan.getTag();
+        this.name = clan.getName();
+        this.description = clan.getDescription();
+        this.type = clan.getType();
+        this.score = clan.getScore();
+        this.memberCount = clan.getMemberCount();
+        this.requiredScore = clan.getRequiredScore();
+        this.donations = clan.getDonations();
+        this.badge = clan.getBadge();
+    }
+
     public String getTag() {
         return tag;
     }
@@ -93,5 +109,20 @@ public class Clan {
 
     public void setBadge(Badge badge) {
         this.badge = badge;
+    }
+
+    @Override
+    public String toString() {
+        return "Clan{" +
+                "tag='" + tag + '\'' +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", type='" + type + '\'' +
+                ", score=" + score +
+                ", memberCount=" + memberCount +
+                ", requiredScore=" + requiredScore +
+                ", donations=" + donations +
+                ", badge=" + badge +
+                '}';
     }
 }

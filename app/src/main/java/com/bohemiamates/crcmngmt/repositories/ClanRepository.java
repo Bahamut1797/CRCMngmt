@@ -11,7 +11,12 @@ public class ClanRepository {
     private ClanDao mClanDao;
     private Clan mClan;
 
-    ClanRepository(Application application, String clanTag) {
+    public ClanRepository(Application application) {
+        AppDatabase db = AppDatabase.getDatabase(application);
+        mClanDao = db.clanDao();
+    }
+
+    public ClanRepository(Application application, String clanTag) {
         AppDatabase db = AppDatabase.getDatabase(application);
         mClanDao = db.clanDao();
         mClan = mClanDao.loadClan(clanTag);

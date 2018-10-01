@@ -16,6 +16,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.bohemiamates.crcmngmt.R;
 import com.bohemiamates.crcmngmt.models.Clan;
+import com.bohemiamates.crcmngmt.repositories.ClanRepository;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -73,9 +74,13 @@ public class StartActivity extends AppCompatActivity {
             Gson gson = new GsonBuilder().create();
             Clan clan = gson.fromJson(response, Clan.class);
 
-            Log.i("CLAAAAAAAAAAAN", clan.toString());
+            //Log.i("CLAAAAAAAAAAAN", clan.toString());
 
-            
+            com.bohemiamates.crcmngmt.entities.Clan mClan = new com.bohemiamates.crcmngmt.entities.Clan(clan);
+
+            new ClanRepository(getApplication()).insert(mClan);
+
+            Log.i("CLAAAAAAAAAAAN", new ClanRepository(getApplication(), txtClanTag.getText().toString()).getClan().toString());
         }
     };
 
