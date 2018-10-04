@@ -1,5 +1,7 @@
 package com.bohemiamates.crcmngmt.models;
 
+import com.bohemiamates.crcmngmt.entities.Player;
+
 import java.util.List;
 
 public class Clan {

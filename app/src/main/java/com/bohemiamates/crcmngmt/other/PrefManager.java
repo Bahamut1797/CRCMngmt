@@ -3,9 +3,6 @@ package com.bohemiamates.crcmngmt.other;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-/**
- * Created by Lincoln on 05/05/16.
- */
 public class PrefManager {
     private SharedPreferences pref;
     private SharedPreferences.Editor editor;
@@ -14,6 +11,8 @@ public class PrefManager {
     private static final String PREF_NAME = "bohemiamates-welcome";
 
     private static final String IS_FIRST_TIME_LAUNCH = "IsFirstTimeLaunch";
+    private static final String IS_FIRST_TIME_CLAN_INIT = "IsFirstTimeClanInit";
+    private static final String CLAN_TAG = "ClanTag";
 
     public PrefManager(Context context) {
         // shared pref mode
@@ -29,6 +28,24 @@ public class PrefManager {
 
     public boolean isFirstTimeLaunch() {
         return pref.getBoolean(IS_FIRST_TIME_LAUNCH, true);
+    }
+
+    public void setFirstClanInit( boolean isFirstClanInit) {
+        editor.putBoolean(IS_FIRST_TIME_CLAN_INIT, isFirstClanInit);
+        editor.commit();
+    }
+
+    public boolean isFirstClanInit() {
+        return pref.getBoolean(IS_FIRST_TIME_CLAN_INIT, true);
+    }
+
+    public void setClanTag(String clanTag) {
+        editor.putString(CLAN_TAG, clanTag);
+        editor.commit();
+    }
+
+    public String getClanTag() {
+        return pref.getString(CLAN_TAG, "NO EXIST");
     }
 
 }

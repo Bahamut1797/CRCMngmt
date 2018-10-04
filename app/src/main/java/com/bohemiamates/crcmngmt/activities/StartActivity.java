@@ -1,11 +1,16 @@
 package com.bohemiamates.crcmngmt.activities;
 
+import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
@@ -15,25 +20,43 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.bohemiamates.crcmngmt.R;
+import com.bohemiamates.crcmngmt.entities.Player;
 import com.bohemiamates.crcmngmt.models.Clan;
+import com.bohemiamates.crcmngmt.other.PrefManager;
 import com.bohemiamates.crcmngmt.repositories.ClanRepository;
+import com.bohemiamates.crcmngmt.repositories.PlayerRepository;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class StartActivity extends AppCompatActivity {
 
     public TextView txtClanTag;
+    public ProgressDialog mDialog;
+    public Button btnGetClan;
+    public PrefManager prefManager;
+    private Intent intent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start);
 
-        Button btnGetClan = findViewById(R.id.btnGetClan);
+        prefManager = new PrefManager(this);
+        if (!prefManager.isFirstClanInit()) {
+            intent = new Intent(getApplicationContext(), MainActivity.class);
+            intent.putExtra("CLAN_TAG", prefManager.getClanTag());
+            launchHomeScreen();
+            finish();
+        }
+
+        btnGetClan = findViewById(R.id.btnGetClan);
         txtClanTag = findViewById(R.id.txtClanTag);
+
+        mDialog = new ProgressDialog(this);
 
         btnGetClan.setOnClickListener(new btnOnClickListener());
     }
@@ -44,6 +67,15 @@ public class StartActivity extends AppCompatActivity {
         public void onClick(View v) {
             final String URL = getString(R.string.url) + "clan/" + txtClanTag.getText();
             RequestQueue requestQueue;
+
+            hideKeyboard(StartActivity.this);
+
+            btnGetClan.setEnabled(false);
+
+            mDialog.setMessage("Please wait...");
+            mDialog.setCancelable(false);
+            mDialog.setCanceledOnTouchOutside(false);
+            mDialog.show();
 
             requestQueue = Volley.newRequestQueue(getApplicationContext());
 
@@ -74,20 +106,61 @@ public class StartActivity extends AppCompatActivity {
             Gson gson = new GsonBuilder().create();
             Clan clan = gson.fromJson(response, Clan.class);
 
-            //Log.i("CLAAAAAAAAAAAN", clan.toString());
-
             com.bohemiamates.crcmngmt.entities.Clan mClan = new com.bohemiamates.crcmngmt.entities.Clan(clan);
 
             new ClanRepository(getApplication()).insert(mClan);
 
-            Log.i("CLAAAAAAAAAAAN", new ClanRepository(getApplication(), txtClanTag.getText().toString()).getClan().toString());
+            List<Player> mPlayers = clan.getMembers();
+
+            for (Player player :
+                    mPlayers) {
+                player.setClanTag(clan.getTag());
+            }
+
+            new PlayerRepository(getApplication()).insert(mPlayers);
+
+            if (mDialog.isShowing()) {
+                mDialog.dismiss();
+            }
+
+            intent = new Intent(getApplicationContext(), MainActivity.class);
+            intent.putExtra("CLAN_TAG", clan.getTag());
+            prefManager.setClanTag(clan.getTag());
+            launchHomeScreen();
         }
     };
+
+    private void launchHomeScreen() {
+        prefManager.setFirstClanInit(false);
+
+        startActivity(intent);
+        finish();
+    }
 
     private final Response.ErrorListener onPostsError = new Response.ErrorListener() {
         @Override
         public void onErrorResponse(VolleyError error) {
             Log.e("PostActivity", error.toString());
+
+            if (mDialog.isShowing()) {
+                mDialog.dismiss();
+            }
+
+            btnGetClan.setEnabled(true);
+
+            Toast.makeText(getApplicationContext(), "Clan maybe doesn't exist, try again.", Toast.LENGTH_LONG).show();
         }
     };
+
+    public static void hideKeyboard(Activity activity) {
+        InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        //Find the currently focused view, so we can grab the correct window token from it.
+        View view = activity.getCurrentFocus();
+        //If no view currently has focus, create a new one, just so we can grab a window token from it
+        if (view == null) {
+            view = new View(activity);
+        }
+        assert imm != null;
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
 }
