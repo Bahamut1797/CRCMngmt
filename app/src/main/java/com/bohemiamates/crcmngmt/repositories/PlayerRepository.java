@@ -24,12 +24,13 @@ public class PlayerRepository {
         return mPlayerDao.loadAllPlayers(clanTag);
     }
 
-    public void insert(List<Player> players) {
+    public void insertAll(List<Player> players) {
         for (Player player:
              players) {
             new InsertAsyncTask(mPlayerDao).execute(player);
         }
     }
+
 
     public static class InsertAsyncTask extends AsyncTask<Player, Void, Void>{
 

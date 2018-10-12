@@ -117,7 +117,7 @@ public class StartActivity extends AppCompatActivity {
                 player.setClanTag(clan.getTag());
             }
 
-            new PlayerRepository(getApplication()).insert(mPlayers);
+            new PlayerRepository(getApplication()).insertAll(mPlayers);
 
             if (mDialog.isShowing()) {
                 mDialog.dismiss();

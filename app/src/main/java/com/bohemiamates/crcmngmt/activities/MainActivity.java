@@ -1,10 +1,15 @@
 package com.bohemiamates.crcmngmt.activities;
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -14,12 +19,21 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bohemiamates.crcmngmt.R;
+import com.bohemiamates.crcmngmt.adapters.PlayerListAdapter;
+import com.bohemiamates.crcmngmt.entities.Player;
+import com.bohemiamates.crcmngmt.viewModels.PlayerViewModel;
+
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    private PlayerViewModel mViewModel;
+    private String mClanTag;
+    RecyclerView recyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,6 +41,26 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        // RecycleView with Adapter
+        recyclerView = findViewById(R.id.recyclerview);
+        final PlayerListAdapter adapter = new PlayerListAdapter(this);
+        recyclerView.setAdapter(adapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        mClanTag = getIntent().getStringExtra("CLAN_TAG");
+
+        // PlayerViewModel
+        mViewModel = ViewModelProviders.of(this).get(PlayerViewModel.class);
+
+        mViewModel.getAllPlayers(mClanTag).observe(this, new Observer<List<Player>>() {
+            @Override
+            public void onChanged(@Nullable final List<Player> players) {
+                // Update the cached copy of the words in the adapter.
+                adapter.setPlayers(players);
+            }
+        });
+
 
         final String API_KEY = getString(R.string.key);
 
@@ -39,17 +73,16 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        TextView txt = findViewById(R.id.txtHello);
-        txt.setText(getIntent().getStringExtra("CLAN_TAG"));
+
     }
 
     @Override
