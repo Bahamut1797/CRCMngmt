@@ -22,12 +22,17 @@ import com.android.volley.toolbox.Volley;
 import com.bohemiamates.crcmngmt.R;
 import com.bohemiamates.crcmngmt.entities.Player;
 import com.bohemiamates.crcmngmt.models.Clan;
+import com.bohemiamates.crcmngmt.models.ClanWarLog;
+import com.bohemiamates.crcmngmt.models.Participant;
 import com.bohemiamates.crcmngmt.other.PrefManager;
 import com.bohemiamates.crcmngmt.repositories.ClanRepository;
 import com.bohemiamates.crcmngmt.repositories.PlayerRepository;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -65,7 +70,7 @@ public class StartActivity extends AppCompatActivity {
 
         @Override
         public void onClick(View v) {
-            final String URL = getString(R.string.url) + "clan/" + txtClanTag.getText();
+            String URL = getString(R.string.url) + "clan/" + txtClanTag.getText() + "/warlog";
             RequestQueue requestQueue;
 
             hideKeyboard(StartActivity.this);
@@ -81,7 +86,7 @@ public class StartActivity extends AppCompatActivity {
 
 
             StringRequest request = new StringRequest(Request.Method.GET, URL,
-                    onPostsLoaded, onPostsError) {
+                    onWarlogLoaded, onWarlogError) {
                 @Override
                 public Map<String, String> getHeaders() {
                     Map<String, String>  params = new HashMap<>();
@@ -94,11 +99,59 @@ public class StartActivity extends AppCompatActivity {
                     DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 
             requestQueue.add(request);
-
         }
     }
 
-    private final Response.Listener<String> onPostsLoaded = new Response.Listener<String>() {
+    private ClanWarLog clanWarLog;
+
+    private final Response.Listener<String> onWarlogLoaded = new Response.Listener<String>() {
+        @Override
+        public void onResponse(String response) {
+            Log.i("PostActivity", response);
+
+            Type listType = new TypeToken<ArrayList<ClanWarLog>>(){}.getType();
+            List<ClanWarLog> warLog = new Gson().fromJson(response, listType);
+
+            if (warLog.size() > 0) {
+                Log.i("WARLOG", warLog.get(0).toString());
+                clanWarLog = warLog.get(0);
+                prefManager.setClanWarTime(clanWarLog.getCreateDate());
+            } else {
+                Toast.makeText(getApplicationContext(), "Clan doesn't have a War log yet, getting members...", Toast.LENGTH_LONG).show();
+            }
+
+
+            RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
+
+            String URL = getString(R.string.url) + "clan/" + txtClanTag.getText();
+
+            StringRequest request = new StringRequest(Request.Method.GET, URL,
+                    onClanLoaded, onClanError) {
+                @Override
+                public Map<String, String> getHeaders() {
+                    Map<String, String>  params = new HashMap<>();
+                    params.put("Authorization", "Bearer " + getString(R.string.key));
+                    return params;
+                }
+            };
+
+            request.setRetryPolicy(new DefaultRetryPolicy( 5000, 2,
+                    DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
+            requestQueue.add(request);
+        }
+    };
+
+    private final Response.ErrorListener onWarlogError = new Response.ErrorListener() {
+        @Override
+        public void onErrorResponse(VolleyError error) {
+            Log.e("PostActivity", error.toString());
+
+            Toast.makeText(getApplicationContext(), "Clan maybe doesn't exist, try again.", Toast.LENGTH_LONG).show();
+        }
+    };
+
+    private final Response.Listener<String> onClanLoaded = new Response.Listener<String>() {
         @Override
         public void onResponse(String response) {
             Log.i("PostActivity", response);
@@ -112,9 +165,23 @@ public class StartActivity extends AppCompatActivity {
 
             List<Player> mPlayers = clan.getMembers();
 
+            List<Participant> participants = clanWarLog.getParticipants();
+
             for (Player player :
                     mPlayers) {
                 player.setClanTag(clan.getTag());
+
+                for (Participant participant: participants) {
+                    if (participant.getTag().equals(player.getTag())) {
+                        if (participant.getBattlesPlayed() == 0) {
+                            player.setClanFails(1);
+                        }
+                        else {
+                            player.setClanFails(0);
+                        }
+                        break;
+                    }
+                }
             }
 
             new PlayerRepository(getApplication()).insertAll(mPlayers);
@@ -130,14 +197,7 @@ public class StartActivity extends AppCompatActivity {
         }
     };
 
-    private void launchHomeScreen() {
-        prefManager.setFirstClanInit(false);
-
-        startActivity(intent);
-        finish();
-    }
-
-    private final Response.ErrorListener onPostsError = new Response.ErrorListener() {
+    private final Response.ErrorListener onClanError = new Response.ErrorListener() {
         @Override
         public void onErrorResponse(VolleyError error) {
             Log.e("PostActivity", error.toString());
@@ -151,6 +211,13 @@ public class StartActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), "Clan maybe doesn't exist, try again.", Toast.LENGTH_LONG).show();
         }
     };
+
+    private void launchHomeScreen() {
+        prefManager.setFirstClanInit(false);
+
+        startActivity(intent);
+        finish();
+    }
 
     public static void hideKeyboard(Activity activity) {
         InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);

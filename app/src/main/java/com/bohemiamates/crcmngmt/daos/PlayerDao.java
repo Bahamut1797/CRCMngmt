@@ -25,6 +25,9 @@ public interface PlayerDao {
     @Query("SELECT * FROM players WHERE clanTag = :clanTag")
     LiveData<List<Player>> loadAllPlayers(String clanTag);
 
+    @Query("SELECT * FROM players WHERE clanTag = :clanTag")
+    List<Player> loadPlayers(String clanTag);
+
     @Query("SELECT * FROM players WHERE tag = :tag")
     Player loadPlayer(String tag);
 }

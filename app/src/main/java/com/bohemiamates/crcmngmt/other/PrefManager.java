@@ -13,6 +13,7 @@ public class PrefManager {
     private static final String IS_FIRST_TIME_LAUNCH = "IsFirstTimeLaunch";
     private static final String IS_FIRST_TIME_CLAN_INIT = "IsFirstTimeClanInit";
     private static final String CLAN_TAG = "ClanTag";
+    private static final String CLAN_WAR_TAG = "ClanWar";
 
     public PrefManager(Context context) {
         // shared pref mode
@@ -46,6 +47,15 @@ public class PrefManager {
 
     public String getClanTag() {
         return pref.getString(CLAN_TAG, "NO EXIST");
+    }
+
+    public void setClanWarTime(Long time) {
+        editor.putLong(CLAN_WAR_TAG, time);
+        editor.commit();
+    }
+
+    public Long getClanWarTime() {
+        return pref.getLong(CLAN_WAR_TAG, 0);
     }
 
 }

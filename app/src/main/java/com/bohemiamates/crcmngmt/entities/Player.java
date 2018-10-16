@@ -26,6 +26,7 @@ public class Player {
     private int donationsReceived;
     private int donationsDelta;
     private double donationsPercent;
+    private int clanFails;
 
     public String getTag() {
         return tag;
@@ -113,5 +114,13 @@ public class Player {
 
     public void setDonationsPercent(double donationsPercent) {
         this.donationsPercent = donationsPercent;
+    }
+
+    public int getClanFails() {
+        return clanFails;
+    }
+
+    public void setClanFails(int clanFails) {
+        this.clanFails = clanFails;
     }
 }

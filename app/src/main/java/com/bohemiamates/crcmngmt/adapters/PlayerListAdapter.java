@@ -1,6 +1,7 @@
 package com.bohemiamates.crcmngmt.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -27,7 +28,7 @@ public class PlayerListAdapter extends RecyclerView.Adapter<PlayerListAdapter.Pl
     }
 
     private final LayoutInflater mInflater;
-    private List<Player> mPlayers; // Cached copy of words
+    private List<Player> mPlayers; // Cached copy of players
 
     public PlayerListAdapter(Context context) {
         mInflater = LayoutInflater.from(context);
@@ -35,13 +36,17 @@ public class PlayerListAdapter extends RecyclerView.Adapter<PlayerListAdapter.Pl
 
     @NonNull
     @Override
-    public PlayerViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View itemView = mInflater.inflate(R.layout.recyclerview_item, parent, false);
+    public PlayerViewHolder onCreateViewHolder(@NonNull final ViewGroup parent, int viewType) {
+        final View itemView = mInflater.inflate(R.layout.recyclerview_item, parent, false);
         itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 TextView mPlayerName = v.findViewById(R.id.rv_playername);
                 Log.i("XYZ", mPlayerName.getText().toString());
+
+                Context c = v.getContext();
+                Intent i = new Intent(c, PlayerListAdapter.class);
+                //c.startActivity(i);
             }
         });
         return new PlayerViewHolder(itemView);
@@ -51,7 +56,7 @@ public class PlayerListAdapter extends RecyclerView.Adapter<PlayerListAdapter.Pl
     public void onBindViewHolder(@NonNull PlayerViewHolder holder, int position) {
         if (mPlayers != null) {
             Player current = mPlayers.get(position);
-            holder.mPlayerName.setText(current.getName());
+            holder.mPlayerName.setText((position + 1)  + " - " + current.getName() + " - No Fails: " + current.getClanFails());
         } else {
             // Covers the case of data not being ready yet.
             holder.mPlayerName.setText("No Players");

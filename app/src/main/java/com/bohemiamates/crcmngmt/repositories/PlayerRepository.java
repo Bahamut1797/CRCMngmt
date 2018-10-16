@@ -24,10 +24,21 @@ public class PlayerRepository {
         return mPlayerDao.loadAllPlayers(clanTag);
     }
 
+    public List<Player> getAllPlayers(String clanTag) {
+        return mPlayerDao.loadPlayers(clanTag);
+    }
+
     public void insertAll(List<Player> players) {
         for (Player player:
              players) {
             new InsertAsyncTask(mPlayerDao).execute(player);
+        }
+    }
+
+    public void updateAll(List<Player> players) {
+        for (Player player:
+                players) {
+            new UpdateAsyncTask(mPlayerDao).execute(player);
         }
     }
 
@@ -46,6 +57,25 @@ public class PlayerRepository {
                 mAsyncTaskDao.insertPlayers(players[0]);
             } catch (SQLiteConstraintException e) {
                 Log.e("SQLite_EXCEPTION", "Player " + players[0].getTag() + " already exist in DB");
+            }
+            return null;
+        }
+    }
+
+    public static class UpdateAsyncTask extends AsyncTask<Player, Void, Void>{
+
+        private PlayerDao mAsyncTaskDao;
+
+        UpdateAsyncTask(PlayerDao playerDao) {
+            mAsyncTaskDao = playerDao;
+        }
+
+        @Override
+        protected Void doInBackground(Player... players) {
+            try {
+                mAsyncTaskDao.updatePlayers(players[0]);
+            } catch (SQLiteConstraintException e) {
+                Log.e("SQLite_EXCEPTION", e.getMessage());
             }
             return null;
         }
