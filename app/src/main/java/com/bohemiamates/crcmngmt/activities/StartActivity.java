@@ -102,7 +102,7 @@ public class StartActivity extends AppCompatActivity {
         }
     }
 
-    private ClanWarLog clanWarLog;
+    private List<ClanWarLog> warLog;
 
     private final Response.Listener<String> onWarlogLoaded = new Response.Listener<String>() {
         @Override
@@ -110,12 +110,11 @@ public class StartActivity extends AppCompatActivity {
             Log.i("PostActivity", response);
 
             Type listType = new TypeToken<ArrayList<ClanWarLog>>(){}.getType();
-            List<ClanWarLog> warLog = new Gson().fromJson(response, listType);
+            warLog = new Gson().fromJson(response, listType);
 
             if (warLog.size() > 0) {
-                Log.i("WARLOG", warLog.get(0).toString());
-                clanWarLog = warLog.get(0);
-                prefManager.setClanWarTime(clanWarLog.getCreateDate());
+                Log.i("WARLOG", warLog.size() + " - " + warLog.get(0).toString());
+                prefManager.setClanWarTime(warLog.get(0).getCreatedDate());
             } else {
                 Toast.makeText(getApplicationContext(), "Clan doesn't have a War log yet, getting members...", Toast.LENGTH_LONG).show();
             }
@@ -165,21 +164,23 @@ public class StartActivity extends AppCompatActivity {
 
             List<Player> mPlayers = clan.getMembers();
 
-            List<Participant> participants = clanWarLog.getParticipants();
-
             for (Player player :
                     mPlayers) {
                 player.setClanTag(clan.getTag());
+                player.setClanFails(0);
+            }
 
-                for (Participant participant: participants) {
-                    if (participant.getTag().equals(player.getTag())) {
-                        if (participant.getBattlesPlayed() == 0) {
-                            player.setClanFails(1);
+            for (ClanWarLog clanWarLog : warLog) {
+                List<Participant> participants = clanWarLog.getParticipants();
+
+                for (Player player : mPlayers) {
+                    for (Participant participant : participants) {
+                        if (participant.getTag().equals(player.getTag())) {
+                            if (participant.getBattlesPlayed() == 0) {
+                                player.setClanFails(player.getClanFails() + 1);
+                            }
+                            break;
                         }
-                        else {
-                            player.setClanFails(0);
-                        }
-                        break;
                     }
                 }
             }

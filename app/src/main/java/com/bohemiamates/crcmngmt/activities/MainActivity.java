@@ -21,6 +21,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.DefaultRetryPolicy;
@@ -32,12 +34,15 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.bohemiamates.crcmngmt.R;
 import com.bohemiamates.crcmngmt.adapters.PlayerListAdapter;
+import com.bohemiamates.crcmngmt.entities.Clan;
 import com.bohemiamates.crcmngmt.entities.Player;
 import com.bohemiamates.crcmngmt.models.ClanWarLog;
 import com.bohemiamates.crcmngmt.models.Participant;
 import com.bohemiamates.crcmngmt.other.PrefManager;
+import com.bohemiamates.crcmngmt.repositories.ClanRepository;
 import com.bohemiamates.crcmngmt.repositories.PlayerRepository;
 import com.bohemiamates.crcmngmt.viewModels.PlayerViewModel;
+import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -54,6 +59,11 @@ public class MainActivity extends AppCompatActivity
     private String mClanTag;
     RecyclerView recyclerView;
     PrefManager prefManager;
+    private TextView clanName;
+    private TextView clanDesc;
+    private ImageView clanBadge;
+    private View navHeader;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,17 +72,16 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        mClanTag = getIntent().getStringExtra("CLAN_TAG");
+
         prefManager = new PrefManager(this);
         mDialog = new ProgressDialog(this);
-        refreshData();
 
         // RecycleView with Adapter
         recyclerView = findViewById(R.id.recyclerview);
         final PlayerListAdapter adapter = new PlayerListAdapter(this);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
-        mClanTag = getIntent().getStringExtra("CLAN_TAG");
 
         // PlayerViewModel
         mViewModel = ViewModelProviders.of(this).get(PlayerViewModel.class);
@@ -102,6 +111,12 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        navHeader = navigationView.getHeaderView(0);
+        clanBadge = navHeader.findViewById(R.id.clanBadge);
+        clanName = navHeader.findViewById(R.id.clanName);
+        clanDesc = navHeader.findViewById(R.id.clanDesc);
+
+        refreshData();
     }
 
     public ProgressDialog mDialog;
@@ -112,8 +127,17 @@ public class MainActivity extends AppCompatActivity
         mDialog.setCanceledOnTouchOutside(false);
         mDialog.show();
 
+        // TODO - Clan update
+        Clan clan = new ClanRepository(getApplication()).getClan(mClanTag);
+        clanName.setText(clan.getName());
+        clanDesc.setText(clan.getDescription());
+        Glide.with(getApplication())
+                .load(clan.getBadge().getImage())
+                .thumbnail(0.01f)
+                .into(clanBadge);
+
         RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
-        String URL = getString(R.string.url) + "clan/" + getIntent().getStringExtra("CLAN_TAG") + "/warlog";
+        String URL = getString(R.string.url) + "clan/" + mClanTag + "/warlog";
 
         StringRequest request = new StringRequest(Request.Method.GET, URL,
                 onWarlogLoaded, onWarlogError) {
@@ -143,9 +167,9 @@ public class MainActivity extends AppCompatActivity
                 Log.i("WARLOG", warLog.get(0).toString());
                 ClanWarLog clanWarLog = warLog.get(0);
 
-                if (clanWarLog.getCreateDate() > prefManager.getClanWarTime()) {
+                if (clanWarLog.getCreatedDate() > prefManager.getClanWarTime()) {
                     //TODO
-                    List<Player> mPlayers = new PlayerRepository(getApplication()).getAllPlayers(getIntent().getStringExtra("CLAN_TAG"));
+                    List<Player> mPlayers = new PlayerRepository(getApplication()).getAllPlayers(mClanTag);
 
                     List<Participant> participants = clanWarLog.getParticipants();
 
@@ -163,7 +187,7 @@ public class MainActivity extends AppCompatActivity
 
                     new PlayerRepository(getApplication()).updateAll(mPlayers);
 
-                    prefManager.setClanWarTime(clanWarLog.getCreateDate());
+                    prefManager.setClanWarTime(clanWarLog.getCreatedDate());
                 }
             } else {
                 Toast.makeText(getApplicationContext(), "Clan doesn't have a War log yet.", Toast.LENGTH_LONG).show();
