@@ -22,11 +22,8 @@ public interface PlayerDao {
     @Delete
     void deletePlayers(Player... player);
 
-    @Query("SELECT * FROM players WHERE clanTag = :clanTag")
+    @Query("SELECT * FROM players WHERE clanTag = :clanTag ORDER BY clanFails DESC, rank ASC")
     LiveData<List<Player>> loadAllPlayers(String clanTag);
-
-    @Query("SELECT * FROM players WHERE clanTag = :clanTag")
-    List<Player> loadPlayers(String clanTag);
 
     @Query("SELECT * FROM players WHERE tag = :tag")
     Player loadPlayer(String tag);

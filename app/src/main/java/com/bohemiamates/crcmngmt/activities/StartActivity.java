@@ -147,6 +147,12 @@ public class StartActivity extends AppCompatActivity {
             Log.e("PostActivity", error.toString());
 
             Toast.makeText(getApplicationContext(), "Clan maybe doesn't exist, try again.", Toast.LENGTH_LONG).show();
+
+            if (mDialog.isShowing()) {
+                mDialog.dismiss();
+            }
+
+            btnGetClan.setEnabled(true);
         }
     };
 
@@ -186,10 +192,6 @@ public class StartActivity extends AppCompatActivity {
             }
 
             new PlayerRepository(getApplication()).insertAll(mPlayers);
-
-            if (mDialog.isShowing()) {
-                mDialog.dismiss();
-            }
 
             intent = new Intent(getApplicationContext(), MainActivity.class);
             intent.putExtra("CLAN_TAG", clan.getTag());

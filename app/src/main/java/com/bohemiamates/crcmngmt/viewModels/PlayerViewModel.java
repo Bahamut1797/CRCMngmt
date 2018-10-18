@@ -23,5 +23,7 @@ public class PlayerViewModel extends AndroidViewModel {
         return mPlayerRepository.getPlayers(clanTag);
     }
 
-    //public void insert(Player player) { mPlayerRepository.insertAll(player); }
+    public void insertAll(List<Player> player) { mPlayerRepository.insertAll(player); }
+
+    public void updateAll(List<Player> player) { mPlayerRepository.updateAll(player); }
 }

@@ -7,7 +7,6 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -39,8 +38,8 @@ import com.bohemiamates.crcmngmt.entities.Player;
 import com.bohemiamates.crcmngmt.models.ClanWarLog;
 import com.bohemiamates.crcmngmt.models.Participant;
 import com.bohemiamates.crcmngmt.other.PrefManager;
-import com.bohemiamates.crcmngmt.repositories.ClanRepository;
 import com.bohemiamates.crcmngmt.repositories.PlayerRepository;
+import com.bohemiamates.crcmngmt.viewModels.ClanViewModel;
 import com.bohemiamates.crcmngmt.viewModels.PlayerViewModel;
 import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
@@ -55,7 +54,8 @@ import java.util.Map;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    private PlayerViewModel mViewModel;
+    private PlayerViewModel mPlayerViewModel;
+    private ClanViewModel mClanViewModel;
     private String mClanTag;
     RecyclerView recyclerView;
     PrefManager prefManager;
@@ -63,6 +63,7 @@ public class MainActivity extends AppCompatActivity
     private TextView clanDesc;
     private ImageView clanBadge;
     private View navHeader;
+    private List<Player> playerList;
 
 
     @Override
@@ -84,15 +85,32 @@ public class MainActivity extends AppCompatActivity
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         // PlayerViewModel
-        mViewModel = ViewModelProviders.of(this).get(PlayerViewModel.class);
+        mPlayerViewModel = ViewModelProviders.of(this).get(PlayerViewModel.class);
 
-        mViewModel.getAllPlayers(mClanTag).observe(this, new Observer<List<Player>>() {
+        mPlayerViewModel.getAllPlayers(mClanTag).observe(this, new Observer<List<Player>>() {
             @Override
             public void onChanged(@Nullable final List<Player> players) {
                 // Update the cached copy of the words in the adapter.
                 adapter.setPlayers(players);
+                playerList = players;
             }
         });
+
+        // ClanViewModel
+        mClanViewModel = ViewModelProviders.of(this).get(ClanViewModel.class);
+
+        mClanViewModel.getClan(mClanTag).observe(this, new Observer<Clan>() {
+            @Override
+            public void onChanged(@Nullable Clan clan) {
+                clanName.setText(clan.getName());
+                clanDesc.setText(clan.getDescription());
+                Glide.with(getApplication())
+                        .load(clan.getBadge().getImage())
+                        .thumbnail(0.5f)
+                        .into(clanBadge);
+            }
+        });
+
 
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -128,13 +146,7 @@ public class MainActivity extends AppCompatActivity
         mDialog.show();
 
         // TODO - Clan update
-        Clan clan = new ClanRepository(getApplication()).getClan(mClanTag);
-        clanName.setText(clan.getName());
-        clanDesc.setText(clan.getDescription());
-        Glide.with(getApplication())
-                .load(clan.getBadge().getImage())
-                .thumbnail(0.01f)
-                .into(clanBadge);
+
 
         RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
         String URL = getString(R.string.url) + "clan/" + mClanTag + "/warlog";
@@ -168,8 +180,8 @@ public class MainActivity extends AppCompatActivity
                 ClanWarLog clanWarLog = warLog.get(0);
 
                 if (clanWarLog.getCreatedDate() > prefManager.getClanWarTime()) {
-                    //TODO
-                    List<Player> mPlayers = new PlayerRepository(getApplication()).getAllPlayers(mClanTag);
+
+                    List<Player> mPlayers = playerList;
 
                     List<Participant> participants = clanWarLog.getParticipants();
 
@@ -185,7 +197,9 @@ public class MainActivity extends AppCompatActivity
                         }
                     }
 
-                    new PlayerRepository(getApplication()).updateAll(mPlayers);
+                    mPlayerViewModel.updateAll(mPlayers);
+
+                    //new PlayerRepository(getApplication()).updateAll(mPlayers);
 
                     prefManager.setClanWarTime(clanWarLog.getCreatedDate());
                 }

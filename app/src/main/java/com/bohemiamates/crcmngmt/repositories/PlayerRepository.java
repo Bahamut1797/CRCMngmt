@@ -24,10 +24,6 @@ public class PlayerRepository {
         return mPlayerDao.loadAllPlayers(clanTag);
     }
 
-    public List<Player> getAllPlayers(String clanTag) {
-        return mPlayerDao.loadPlayers(clanTag);
-    }
-
     public void insertAll(List<Player> players) {
         for (Player player:
              players) {
