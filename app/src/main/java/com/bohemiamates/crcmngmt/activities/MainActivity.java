@@ -38,7 +38,6 @@ import com.bohemiamates.crcmngmt.entities.Player;
 import com.bohemiamates.crcmngmt.models.ClanWarLog;
 import com.bohemiamates.crcmngmt.models.Participant;
 import com.bohemiamates.crcmngmt.other.PrefManager;
-import com.bohemiamates.crcmngmt.repositories.PlayerRepository;
 import com.bohemiamates.crcmngmt.viewModels.ClanViewModel;
 import com.bohemiamates.crcmngmt.viewModels.PlayerViewModel;
 import com.bumptech.glide.Glide;
