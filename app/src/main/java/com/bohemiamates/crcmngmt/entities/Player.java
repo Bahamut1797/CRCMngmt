@@ -27,6 +27,7 @@ public class Player {
     private int donationsDelta;
     private double donationsPercent;
     private int clanFails;
+    private String clanBadgeUri;
 
     public String getTag() {
         return tag;
@@ -122,5 +123,13 @@ public class Player {
 
     public void setClanFails(int clanFails) {
         this.clanFails = clanFails;
+    }
+
+    public String getClanBadgeUri() {
+        return clanBadgeUri;
+    }
+
+    public void setClanBadgeUri(String clanBadgeUri) {
+        this.clanBadgeUri = clanBadgeUri;
     }
 }

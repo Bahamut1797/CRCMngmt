@@ -174,6 +174,7 @@ public class StartActivity extends AppCompatActivity {
                     mPlayers) {
                 player.setClanTag(clan.getTag());
                 player.setClanFails(0);
+                player.setClanBadgeUri(clan.getBadge().getImage());
             }
 
             for (ClanWarLog clanWarLog : warLog) {
