@@ -27,8 +27,10 @@ public class PlayerListAdapter extends RecyclerView.Adapter<PlayerListAdapter.Pl
         private final TextView mPlayerRole;
         private final TextView mPlayerTrophies;
         private final TextView mPlayerDonations;
-        private final TextView mPlayerFails;
         private final ImageView mImageView;
+        private final ImageView mFail1;
+        private final ImageView mFail2;
+        private final ImageView mFail3;
         private final LinearLayout mLinearLayout;
 
         private PlayerViewHolder(View itemView) {
@@ -40,7 +42,9 @@ public class PlayerListAdapter extends RecyclerView.Adapter<PlayerListAdapter.Pl
             mPlayerRole = itemView.findViewById(R.id.rv_playerrole);
             mPlayerTrophies = itemView.findViewById(R.id.rv_playertrophies);
             mPlayerDonations = itemView.findViewById(R.id.rv_playerdonations);
-            mPlayerFails = itemView.findViewById(R.id.rv_playerfails);
+            mFail1 = itemView.findViewById(R.id.fail_1);
+            mFail2 = itemView.findViewById(R.id.fail_2);
+            mFail3 = itemView.findViewById(R.id.fail_3);
             mLinearLayout = itemView.findViewById(R.id.rc_background);
         }
     }
@@ -103,26 +107,30 @@ public class PlayerListAdapter extends RecyclerView.Adapter<PlayerListAdapter.Pl
                     break;
             }
 
-            String trophies = mContext.getResources().getString(R.string.txtTrophies) + " " + current.getTrophies();
-            String donations = mContext.getResources().getString(R.string.txtDonations) + " " + current.getDonations();
-            String fails = mContext.getResources().getString(R.string.txtFails) + " " + current.getClanFails();
-
-            holder.mPlayerTrophies.setText(trophies);
-            holder.mPlayerDonations.setText(donations);
-            holder.mPlayerFails.setText(fails);
+            holder.mPlayerTrophies.setText(String.valueOf(current.getTrophies()));
+            holder.mPlayerDonations.setText(String.valueOf(current.getDonations()));
 
             switch (current.getClanFails()) {
                 case 0:
                     holder.mLinearLayout.setBackgroundResource(R.drawable.normal_grad);
+                    holder.mFail1.setImageResource(0);
+                    holder.mFail2.setImageResource(0);
+                    holder.mFail3.setImageResource(0);
                     break;
                 case 1:
                     holder.mLinearLayout.setBackgroundResource(R.drawable.precaution_grad);
+                    holder.mFail1.setImageResource(R.drawable.ic_close_24dp_red);
                     break;
                 case 2:
                     holder.mLinearLayout.setBackgroundResource(R.drawable.warning_grad);
+                    holder.mFail1.setImageResource(R.drawable.ic_close_24dp_red);
+                    holder.mFail2.setImageResource(R.drawable.ic_close_24dp_red);
                     break;
                 default:
                     holder.mLinearLayout.setBackgroundResource(R.drawable.danger_grad);
+                    holder.mFail1.setImageResource(R.drawable.ic_close_24dp_red);
+                    holder.mFail2.setImageResource(R.drawable.ic_close_24dp_red);
+                    holder.mFail3.setImageResource(R.drawable.ic_close_24dp_red);
             }
         } else {
             // Covers the case of data not being ready yet.

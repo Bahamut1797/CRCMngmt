@@ -35,7 +35,7 @@
     <string name="txtTag">Tag</string>
     <string name="txtRole">Rol</string>
     <string name="txtTrophies">Trofeos: </string>
-    <string name="txtDonations">Donaciones/Sem.: </string>
+    <string name="txtDonations">/Sem. </string>
     <string name="txtFails">Guerras Omitidas: </string>
     <!-- PlayerListAdapter -->
     <string name="leader">Líder</string>

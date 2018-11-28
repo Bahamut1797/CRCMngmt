@@ -35,7 +35,7 @@
     <string name="txtTag">Tag</string>
     <string name="txtRole">Role</string>
     <string name="txtTrophies">Trophies: </string>
-    <string name="txtDonations">Donations/Week: </string>
+    <string name="txtDonations">/Week</string>
     <string name="txtFails">Skipped Wars: </string>
     <!-- PlayerListAdapter -->
     <string name="leader">Leader</string>
