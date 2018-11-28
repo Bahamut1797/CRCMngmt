@@ -10,6 +10,7 @@ import com.bohemiamates.crcmngmt.models.Badge;
 @Entity(tableName = "clans")
 public class Clan {
 
+    @SuppressWarnings("NullableProblems")
     @PrimaryKey
     @NonNull
     private String tag;
@@ -39,11 +40,12 @@ public class Clan {
         this.badge = clan.getBadge();
     }
 
+    @NonNull
     public String getTag() {
         return tag;
     }
 
-    public void setTag(String tag) {
+    public void setTag(@NonNull String tag) {
         this.tag = tag;
     }
 

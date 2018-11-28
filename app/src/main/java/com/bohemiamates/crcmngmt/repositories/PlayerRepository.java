@@ -24,11 +24,19 @@ public class PlayerRepository {
         return mPlayerDao.loadAllPlayers(clanTag);
     }
 
+    public LiveData<Player> getPlayer(String tag) {
+        return mPlayerDao.loadPlayer(tag);
+    }
+
     public void insertAll(List<Player> players) {
         for (Player player:
              players) {
             new InsertAsyncTask(mPlayerDao).execute(player);
         }
+    }
+    public void insert(Player player) {
+        new InsertAsyncTask(mPlayerDao).execute(player);
+
     }
 
     public void updateAll(List<Player> players) {
@@ -36,6 +44,14 @@ public class PlayerRepository {
                 players) {
             new UpdateAsyncTask(mPlayerDao).execute(player);
         }
+    }
+
+    public void update(Player player) {
+        new UpdateAsyncTask(mPlayerDao).execute(player);
+    }
+
+    public void delete(Player player) {
+        new DeleteAsyncTask(mPlayerDao).execute(player);
     }
 
 
@@ -50,7 +66,7 @@ public class PlayerRepository {
         @Override
         protected Void doInBackground(Player... players) {
             try {
-                mAsyncTaskDao.insertPlayers(players[0]);
+                mAsyncTaskDao.insertPlayer(players[0]);
             } catch (SQLiteConstraintException e) {
                 Log.e("SQLite_EXCEPTION", "Player " + players[0].getTag() + " already exist in DB");
             }
@@ -69,7 +85,26 @@ public class PlayerRepository {
         @Override
         protected Void doInBackground(Player... players) {
             try {
-                mAsyncTaskDao.updatePlayers(players[0]);
+                mAsyncTaskDao.updatePlayer(players[0]);
+            } catch (SQLiteConstraintException e) {
+                Log.e("SQLite_EXCEPTION", e.getMessage());
+            }
+            return null;
+        }
+    }
+
+    public static class DeleteAsyncTask extends AsyncTask<Player, Void, Void>{
+
+        private PlayerDao mAsyncTaskDao;
+
+        DeleteAsyncTask(PlayerDao playerDao) {
+            mAsyncTaskDao = playerDao;
+        }
+
+        @Override
+        protected Void doInBackground(Player... players) {
+            try {
+                mAsyncTaskDao.deletePlayer(players[0]);
             } catch (SQLiteConstraintException e) {
                 Log.e("SQLite_EXCEPTION", e.getMessage());
             }

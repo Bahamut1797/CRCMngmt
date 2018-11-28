@@ -26,6 +26,10 @@ public class ClanRepository {
         new InsertAsyncTask(mClanDao).execute(clan);
     }
 
+    public void update(Clan clan) {
+        new UpdateAsyncTask(mClanDao).execute(clan);
+    }
+
     private static class InsertAsyncTask extends AsyncTask<Clan, Void, Void> {
 
         private ClanDao mAsyncTaskDao;
@@ -40,6 +44,25 @@ public class ClanRepository {
                 mAsyncTaskDao.insertClan(clans[0]);
             } catch (SQLiteConstraintException e) {
                 Log.e("SQLite_EXCEPTION", "Clan " + clans[0].getTag() + " already exist in DB");
+            }
+            return null;
+        }
+    }
+
+    public static class UpdateAsyncTask extends AsyncTask<Clan, Void, Void>{
+
+        private ClanDao mAsyncTaskDao;
+
+        UpdateAsyncTask(ClanDao clanDao) {
+            mAsyncTaskDao = clanDao;
+        }
+
+        @Override
+        protected Void doInBackground(Clan... clans) {
+            try {
+                mAsyncTaskDao.updateClan(clans[0]);
+            } catch (SQLiteConstraintException e) {
+                Log.e("SQLite_EXCEPTION", e.getMessage());
             }
             return null;
         }

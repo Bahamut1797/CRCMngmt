@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="300dp"
+    android:layout_height="250dp"
+    android:background="@drawable/normal_grad"
+    tools:context=".activities.PlayerInfoActivity">
+
+    <TextView
+        android:id="@+id/inf_playername"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="HELLO WOLRD"
+        android:textColor="#000"/>
+
+    <ImageButton
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:src="@drawable/ic_close_24dp"
+        android:contentDescription="Close"
+        android:background="@drawable/btn_close"
+        android:elevation="6dp"
+        />
+
+</LinearLayout>

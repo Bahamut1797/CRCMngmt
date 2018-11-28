@@ -14,17 +14,17 @@ import java.util.List;
 @Dao
 public interface PlayerDao {
     @Insert
-    void insertPlayers(Player... player);
+    void insertPlayer(Player player);
 
     @Update
-    void updatePlayers(Player... player);
+    void updatePlayer(Player player);
 
     @Delete
-    void deletePlayers(Player... player);
+    void deletePlayer(Player player);
 
     @Query("SELECT * FROM players WHERE clanTag = :clanTag ORDER BY clanFails DESC, rank ASC")
     LiveData<List<Player>> loadAllPlayers(String clanTag);
 
     @Query("SELECT * FROM players WHERE tag = :tag")
-    Player loadPlayer(String tag);
+    LiveData<Player> loadPlayer(String tag);
 }

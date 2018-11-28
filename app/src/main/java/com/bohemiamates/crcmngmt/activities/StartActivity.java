@@ -33,6 +33,7 @@ import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,6 +50,8 @@ public class StartActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start);
+
+        getWindow().setBackgroundDrawableResource(R.drawable.bg_grey);
 
         prefManager = new PrefManager(this);
         if (!prefManager.isFirstClanInit()) {
@@ -77,7 +80,7 @@ public class StartActivity extends AppCompatActivity {
 
             btnGetClan.setEnabled(false);
 
-            mDialog.setMessage("Please wait...");
+            mDialog.setMessage(getResources().getString(R.string.pleaseWait));
             mDialog.setCancelable(false);
             mDialog.setCanceledOnTouchOutside(false);
             mDialog.show();
@@ -107,7 +110,7 @@ public class StartActivity extends AppCompatActivity {
     private final Response.Listener<String> onWarlogLoaded = new Response.Listener<String>() {
         @Override
         public void onResponse(String response) {
-            Log.i("PostActivity", response);
+            Log.i("Clan WarLog", response);
 
             Type listType = new TypeToken<ArrayList<ClanWarLog>>(){}.getType();
             warLog = new Gson().fromJson(response, listType);
@@ -116,7 +119,7 @@ public class StartActivity extends AppCompatActivity {
                 Log.i("WARLOG", warLog.size() + " - " + warLog.get(0).toString());
                 prefManager.setClanWarTime(warLog.get(0).getCreatedDate());
             } else {
-                Toast.makeText(getApplicationContext(), "Clan doesn't have a War log yet, getting members...", Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), getResources().getString(R.string.clanNotWarLog), Toast.LENGTH_LONG).show();
             }
 
 
@@ -144,9 +147,9 @@ public class StartActivity extends AppCompatActivity {
     private final Response.ErrorListener onWarlogError = new Response.ErrorListener() {
         @Override
         public void onErrorResponse(VolleyError error) {
-            Log.e("PostActivity", error.toString());
+            Log.e("Clan WarLog Error", error.toString());
 
-            Toast.makeText(getApplicationContext(), "Clan maybe doesn't exist, try again.", Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), getResources().getString(R.string.errorClan), Toast.LENGTH_LONG).show();
 
             if (mDialog.isShowing()) {
                 mDialog.dismiss();
@@ -159,7 +162,7 @@ public class StartActivity extends AppCompatActivity {
     private final Response.Listener<String> onClanLoaded = new Response.Listener<String>() {
         @Override
         public void onResponse(String response) {
-            Log.i("PostActivity", response);
+            Log.i("Clan members", response);
 
             Gson gson = new GsonBuilder().create();
             Clan clan = gson.fromJson(response, Clan.class);
@@ -177,16 +180,31 @@ public class StartActivity extends AppCompatActivity {
                 player.setClanBadgeUri(clan.getBadge().getImage());
             }
 
-            for (ClanWarLog clanWarLog : warLog) {
-                List<Participant> participants = clanWarLog.getParticipants();
+            Calendar calendar = Calendar.getInstance();
+            // Log.i("CURR_TIME", calendar.get(Calendar.YEAR) + "-" + calendar.get(Calendar.MONTH) + "-" + calendar.get(Calendar.DAY_OF_MONTH));
 
-                for (Player player : mPlayers) {
-                    for (Participant participant : participants) {
-                        if (participant.getTag().equals(player.getTag())) {
-                            if (participant.getBattlesPlayed() == 0) {
-                                player.setClanFails(player.getClanFails() + 1);
+            int currentMonth = calendar.get(Calendar.MONTH);
+            int currentYear = calendar.get(Calendar.YEAR);
+
+            for (ClanWarLog clanWarLog : warLog) {
+                calendar.setTimeInMillis(clanWarLog.getCreatedDate() * 1000);
+                // Log.i("WARLOG_TIME", calendar.get(Calendar.YEAR) + "-" + calendar.get(Calendar.MONTH) + "-" + calendar.get(Calendar.DAY_OF_MONTH));
+                int warLogMonth = calendar.get(Calendar.MONTH);
+                int warLogYear = calendar.get(Calendar.YEAR);
+
+                if (warLogYear == currentYear) {
+                    if (warLogMonth == currentMonth) {
+                        List<Participant> participants = clanWarLog.getParticipants();
+
+                        for (Player player : mPlayers) {
+                            for (Participant participant : participants) {
+                                if (participant.getTag().equals(player.getTag())) {
+                                    if (participant.getBattlesPlayed() == 0) {
+                                        player.setClanFails(player.getClanFails() + 1);
+                                    }
+                                    break;
+                                }
                             }
-                            break;
                         }
                     }
                 }
@@ -197,6 +215,11 @@ public class StartActivity extends AppCompatActivity {
             intent = new Intent(getApplicationContext(), MainActivity.class);
             intent.putExtra("CLAN_TAG", clan.getTag());
             prefManager.setClanTag(clan.getTag());
+
+            if (mDialog.isShowing()) {
+                mDialog.dismiss();
+            }
+
             launchHomeScreen();
         }
     };
@@ -204,7 +227,7 @@ public class StartActivity extends AppCompatActivity {
     private final Response.ErrorListener onClanError = new Response.ErrorListener() {
         @Override
         public void onErrorResponse(VolleyError error) {
-            Log.e("PostActivity", error.toString());
+            Log.e("Clan members", error.toString());
 
             if (mDialog.isShowing()) {
                 mDialog.dismiss();
@@ -212,7 +235,7 @@ public class StartActivity extends AppCompatActivity {
 
             btnGetClan.setEnabled(true);
 
-            Toast.makeText(getApplicationContext(), "Clan maybe doesn't exist, try again.", Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), getResources().getString(R.string.errorClan), Toast.LENGTH_LONG).show();
         }
     };
 

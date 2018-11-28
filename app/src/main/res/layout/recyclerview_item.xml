@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
@@ -30,6 +29,7 @@
 
                 <ImageView
                     android:id="@+id/rv_iconclan"
+                    android:contentDescription="@string/imgIconDesc"
                     android:layout_width="70dp"
                     android:layout_height="70dp"
                     android:paddingTop="6dp" />
@@ -44,14 +44,14 @@
                         style="@style/word_title"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Player"
+                        android:text="@string/txtPlayer"
                         android:textColor="#FFF"/>
 
                     <TextView
                         android:id="@+id/rv_playertag"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Tag"
+                        android:text="@string/txtTag"
                         android:textColor="#FFF"
                         android:paddingLeft="8dp"
                         android:paddingRight="8dp"
@@ -61,7 +61,7 @@
                         android:id="@+id/rv_playerrole"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Tag"
+                        android:text="@string/txtRole"
                         android:textColor="#FFF"
                         android:paddingLeft="8dp"
                         android:paddingRight="8dp"
@@ -85,7 +85,7 @@
                         android:id="@+id/rv_playertrophies"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Trophies"
+                        android:text="@string/txtTrophies"
                         android:textColor="#FFF"
                         android:paddingLeft="8dp"
                         android:paddingRight="8dp"
@@ -95,7 +95,7 @@
                         android:id="@+id/rv_playerdonations"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Donations"
+                        android:text="@string/txtDonations"
                         android:textColor="#FFF"
                         android:paddingLeft="8dp"
                         android:paddingRight="8dp"
@@ -112,7 +112,7 @@
                         android:id="@+id/rv_playerfails"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="No. Fails"
+                        android:text="@string/txtFails"
                         android:textColor="#FFF"
                         android:textSize="18sp"
                         android:paddingRight="8dp"

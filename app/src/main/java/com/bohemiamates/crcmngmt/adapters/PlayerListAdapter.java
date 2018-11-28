@@ -13,6 +13,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bohemiamates.crcmngmt.R;
+import com.bohemiamates.crcmngmt.activities.PlayerInfoActivity;
 import com.bohemiamates.crcmngmt.entities.Player;
 import com.bumptech.glide.Glide;
 
@@ -60,12 +61,13 @@ public class PlayerListAdapter extends RecyclerView.Adapter<PlayerListAdapter.Pl
         itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                TextView mPlayerName = v.findViewById(R.id.rv_playername);
-                Log.i("XYZ", mPlayerName.getText().toString());
+                TextView mPlayerTag = v.findViewById(R.id.rv_playertag);
+                Log.i("onClick", mPlayerTag.getText().toString());
 
                 Context c = v.getContext();
-                Intent i = new Intent(c, PlayerListAdapter.class);
-                //c.startActivity(i);
+                Intent i = new Intent(c, PlayerInfoActivity.class);
+                i.putExtra("TAG", mPlayerTag.getText().toString());
+                c.startActivity(i);
             }
         });
         return new PlayerViewHolder(itemView);
@@ -81,12 +83,33 @@ public class PlayerListAdapter extends RecyclerView.Adapter<PlayerListAdapter.Pl
                     .thumbnail(0.5f)
                     .into(holder.mImageView);
 
+            String playerTag = "#" + current.getTag();
+
             holder.mPlayerName.setText(current.getName());
-            holder.mPlayerTag.setText("#" + current.getTag());
-            holder.mPlayerRole.setText(current.getRole());
-            holder.mPlayerTrophies.setText("Trophies: " + current.getTrophies());
-            holder.mPlayerDonations.setText("Donations/Week: " + current.getDonations());
-            holder.mPlayerFails.setText("No. Fails: " + current.getClanFails());
+            holder.mPlayerTag.setText(playerTag);
+
+            switch (current.getRole()) {
+                case "leader":
+                    holder.mPlayerRole.setText(R.string.leader);
+                    break;
+                case "coLeader":
+                    holder.mPlayerRole.setText(R.string.coLeader);
+                    break;
+                case "elder":
+                    holder.mPlayerRole.setText(R.string.elder);
+                    break;
+                case "member":
+                    holder.mPlayerRole.setText(R.string.member);
+                    break;
+            }
+
+            String trophies = mContext.getResources().getString(R.string.txtTrophies) + " " + current.getTrophies();
+            String donations = mContext.getResources().getString(R.string.txtDonations) + " " + current.getDonations();
+            String fails = mContext.getResources().getString(R.string.txtFails) + " " + current.getClanFails();
+
+            holder.mPlayerTrophies.setText(trophies);
+            holder.mPlayerDonations.setText(donations);
+            holder.mPlayerFails.setText(fails);
 
             switch (current.getClanFails()) {
                 case 0:
@@ -103,7 +126,7 @@ public class PlayerListAdapter extends RecyclerView.Adapter<PlayerListAdapter.Pl
             }
         } else {
             // Covers the case of data not being ready yet.
-            holder.mPlayerName.setText("No Players");
+            holder.mPlayerName.setText(R.string.noPlayers);
         }
     }
 

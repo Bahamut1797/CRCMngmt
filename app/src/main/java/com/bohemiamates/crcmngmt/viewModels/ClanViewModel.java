@@ -6,7 +6,6 @@ import android.arch.lifecycle.LiveData;
 import android.support.annotation.NonNull;
 
 import com.bohemiamates.crcmngmt.entities.Clan;
-import com.bohemiamates.crcmngmt.entities.Player;
 import com.bohemiamates.crcmngmt.repositories.ClanRepository;
 
 import java.util.List;
@@ -26,5 +25,5 @@ public class ClanViewModel extends AndroidViewModel {
 
     public void insert(Clan clan) { mClanRepository.insert(clan); }
 
-    //public void update(Clan clan) { mClanRepository.update(clan); }
+    public void update(Clan clan) { mClanRepository.update(clan); }
 }

@@ -9,45 +9,45 @@
     <string name="nav_header_subtitle">android.studio@android.com</string>
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
-    <string name="imgClanDesc">Clan Badge</string>
+    <string name="imgClanDesc">Clan Icono</string>
 
     <!-- Start activity -->
-    <string name="txtSearchClan">Search a Clan</string>
+    <string name="txtSearchClan">Buscar Clan</string>
     <string name="txtHint">Clan Tag</string>
-    <string name="btnGetClan">Get Clan</string>
+    <string name="btnGetClan">Obtener Clan</string>
 
     <!-- MainActivity -->
-    <string name="refreshData">Refreshing data…</string>
-    <string name="error">Error, try again.</string>
-    <string name="clanWarLog">Clan does not have a War log yet.</string>}
-    <string name="exitTitle">Do you want to exit?</string>
-    <string name="exitConfirm">Yes</string>
-    <string name="exitCancel">Cancel</string>
+    <string name="refreshData">Refrescando datos…</string>
+    <string name="error">Error, intenta nuevamente.</string>
+    <string name="clanWarLog">El Clan no tiene un Registro de Guerra aún.</string>}
+    <string name="exitTitle">¿Quieres salir?</string>
+    <string name="exitConfirm">Si</string>
+    <string name="exitCancel">Cancelar</string>
 
     <!-- StartActivity -->
-    <string name="pleaseWait">Please wait…</string>
-    <string name="clanNotWarLog">Clan does not have a War log yet, getting members…</string>
-    <string name="errorClan">Clan maybe does not exist, try again.</string>
+    <string name="pleaseWait">Por favor espera…</string>
+    <string name="clanNotWarLog">El Clan no tiene un Registro de Guerra aún, obteniendo miembros…</string>
+    <string name="errorClan">El Clan tal vez no existe, intenta nuevamente.</string>
 
     <!-- RecyclerView_item -->
     <string name="imgIconDesc">Logo</string>
-    <string name="txtPlayer">Player</string>
+    <string name="txtPlayer">Jugador</string>
     <string name="txtTag">Tag</string>
-    <string name="txtRole">Role</string>
-    <string name="txtTrophies">Trophies: </string>
-    <string name="txtDonations">Donations/Week: </string>
-    <string name="txtFails">Skipped Wars: </string>
+    <string name="txtRole">Rol</string>
+    <string name="txtTrophies">Trofeos: </string>
+    <string name="txtDonations">Donaciones/Sem.: </string>
+    <string name="txtFails">Guerras Omitidas: </string>
     <!-- PlayerListAdapter -->
-    <string name="leader">Leader</string>
-    <string name="coLeader">Co-Leader</string>
-    <string name="elder">Elder</string>
-    <string name="member">Member</string>
-    <string name="noPlayers">No Players</string>
+    <string name="leader">Líder</string>
+    <string name="coLeader">Co-Líder</string>
+    <string name="elder">Veterano</string>
+    <string name="member">Miembro</string>
+    <string name="noPlayers">No hay Jugadores</string>
 
     <!-- Slider Intro -->
-    <string name="next">NEXT</string>
-    <string name="skip">SKIP</string>
-    <string name="start">GOT IT</string>
+    <string name="next">SIGUIENTE</string>
+    <string name="skip">SALTAR</string>
+    <string name="start">ENTENDIDO</string>
 
     <string name="slide_1_title">Hello Food!</string>
     <string name="slide_1_desc">The easiest way to order food from your favourite restaurant!</string>

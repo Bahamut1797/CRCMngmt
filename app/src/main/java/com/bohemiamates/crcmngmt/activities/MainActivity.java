@@ -5,6 +5,7 @@ import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
@@ -42,10 +43,12 @@ import com.bohemiamates.crcmngmt.viewModels.ClanViewModel;
 import com.bohemiamates.crcmngmt.viewModels.PlayerViewModel;
 import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -61,7 +64,6 @@ public class MainActivity extends AppCompatActivity
     private TextView clanName;
     private TextView clanDesc;
     private ImageView clanBadge;
-    private View navHeader;
     private List<Player> playerList;
 
 
@@ -89,7 +91,7 @@ public class MainActivity extends AppCompatActivity
         mPlayerViewModel.getAllPlayers(mClanTag).observe(this, new Observer<List<Player>>() {
             @Override
             public void onChanged(@Nullable final List<Player> players) {
-                // Update the cached copy of the words in the adapter.
+                // Update the cached copy of the players in the adapter.
                 adapter.setPlayers(players);
                 playerList = players;
             }
@@ -100,13 +102,15 @@ public class MainActivity extends AppCompatActivity
 
         mClanViewModel.getClan(mClanTag).observe(this, new Observer<Clan>() {
             @Override
-            public void onChanged(@Nullable Clan clan) {
-                clanName.setText(clan.getName());
-                clanDesc.setText(clan.getDescription());
-                Glide.with(getApplication())
-                        .load(clan.getBadge().getImage())
-                        .thumbnail(0.5f)
-                        .into(clanBadge);
+            public void onChanged(@Nullable final Clan clan) {
+                if (clan != null) {
+                    clanName.setText(clan.getName());
+                    clanDesc.setText(clan.getDescription());
+                    Glide.with(getApplication())
+                            .load(clan.getBadge().getImage())
+                            .thumbnail(0.5f)
+                            .into(clanBadge);
+                }
             }
         });
 
@@ -128,30 +132,28 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        navHeader = navigationView.getHeaderView(0);
+        View navHeader = navigationView.getHeaderView(0);
         clanBadge = navHeader.findViewById(R.id.clanBadge);
         clanName = navHeader.findViewById(R.id.clanName);
         clanDesc = navHeader.findViewById(R.id.clanDesc);
 
-        refreshData();
+        //refreshData();
     }
 
     public ProgressDialog mDialog;
 
     private void refreshData() {
-        mDialog.setMessage("Refreshing data...");
+        mDialog.setMessage(getResources().getString(R.string.refreshData));
         mDialog.setCancelable(false);
         mDialog.setCanceledOnTouchOutside(false);
         mDialog.show();
 
-        // TODO - Clan update
-
-
+        // Clan update
         RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
-        String URL = getString(R.string.url) + "clan/" + mClanTag + "/warlog";
+        String URL = getString(R.string.url) + "clan/" + mClanTag;
 
         StringRequest request = new StringRequest(Request.Method.GET, URL,
-                onWarlogLoaded, onWarlogError) {
+                onClanLoaded, onClanError) {
             @Override
             public Map<String, String> getHeaders() {
                 Map<String, String>  params = new HashMap<>();
@@ -166,44 +168,156 @@ public class MainActivity extends AppCompatActivity
         requestQueue.add(request);
     }
 
+    private final Response.Listener<String> onClanLoaded = new Response.Listener<String>() {
+        @Override
+        public void onResponse(String response) {
+            Log.i("Clan members", response);
+
+            Gson gson = new GsonBuilder().create();
+            com.bohemiamates.crcmngmt.models.Clan clan = gson.fromJson(response, com.bohemiamates.crcmngmt.models.Clan.class);
+
+            com.bohemiamates.crcmngmt.entities.Clan mClan = new com.bohemiamates.crcmngmt.entities.Clan(clan);
+
+            mClanViewModel.update(mClan);
+
+            List<Player> mPlayers = clan.getMembers();
+
+            // Set default attrs
+            for (Player player :
+                    mPlayers) {
+                player.setClanTag(clan.getTag());
+                player.setClanFails(0);
+                player.setClanBadgeUri(clan.getBadge().getImage());
+            }
+
+            // Update current members and delete old ones
+            for (Player current : playerList) {
+                boolean delete = true;
+                for (Player mCurrent : mPlayers) {
+                    if (current.getTag().equals(mCurrent.getTag())) {
+                        mCurrent.setClanFails(current.getClanFails());
+                        mPlayerViewModel.update(mCurrent);
+                        delete = false;
+                        break;
+                    }
+                }
+
+                if (delete) {
+                    mPlayerViewModel.delete(current);
+                }
+            }
+
+            // Insert new members
+            for (Player mCurrent : mPlayers) {
+                boolean exist = false;
+                for (Player current : playerList) {
+                    if (mCurrent.getTag().equals(current.getTag())) {
+                        exist = true;
+                        break;
+                    }
+                }
+
+                if (!exist) {
+                    mPlayerViewModel.insert(mCurrent);
+                }
+            }
+
+            // Update clan fails
+            RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
+            String URL = getString(R.string.url) + "clan/" + mClanTag + "/warlog";
+
+            StringRequest request = new StringRequest(Request.Method.GET, URL,
+                    onWarlogLoaded, onWarlogError) {
+                @Override
+                public Map<String, String> getHeaders() {
+                    Map<String, String>  params = new HashMap<>();
+                    params.put("Authorization", "Bearer " + getString(R.string.key));
+                    return params;
+                }
+            };
+
+            request.setRetryPolicy(new DefaultRetryPolicy( 5000, 2,
+                    DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
+            requestQueue.add(request);
+        }
+    };
+
+    private final Response.ErrorListener onClanError = new Response.ErrorListener() {
+        @Override
+        public void onErrorResponse(VolleyError error) {
+            Log.e("Error_on_upd_clan", error.toString());
+
+            Toast.makeText(getApplicationContext(), getResources().getString(R.string.error), Toast.LENGTH_LONG).show();
+
+            if (mDialog.isShowing()) {
+                mDialog.dismiss();
+            }
+        }
+    };
+
     private final Response.Listener<String> onWarlogLoaded = new Response.Listener<String>() {
         @Override
         public void onResponse(String response) {
-            Log.i("PostActivity", response);
+            Log.i("Upd_Clan_Fails", response);
 
             Type listType = new TypeToken<ArrayList<ClanWarLog>>(){}.getType();
             List<ClanWarLog> warLog = new Gson().fromJson(response, listType);
 
+            // Reset clan fails the 1st day of month
+            Calendar calendar = Calendar.getInstance();
+            Log.i("CURR_TIME", calendar.get(Calendar.YEAR) + "-" + calendar.get(Calendar.MONTH) + "-" + calendar.get(Calendar.DAY_OF_MONTH));
+            int currentMonth = calendar.get(Calendar.MONTH);
+            int currentYear = calendar.get(Calendar.YEAR);
+
+            calendar.setTimeInMillis(prefManager.getClanWarTime() * 1000);
+            Log.i("LAST_WARLOG_TIME", calendar.get(Calendar.YEAR) + "-" + calendar.get(Calendar.MONTH) + "-" + calendar.get(Calendar.DAY_OF_MONTH));
+            int warLogMonth = calendar.get(Calendar.MONTH);
+            int warLogYear = calendar.get(Calendar.YEAR);
+
+            if ((warLogYear == currentYear && currentMonth > warLogMonth) || (currentYear > warLogYear)) {
+                Log.i("RESET", "All fails set to 0.");
+
+                for (Player current : playerList) {
+                    current.setClanFails(0);
+                }
+
+                calendar.set(currentYear, currentMonth, 1, 0, 0);
+
+                prefManager.setClanWarTime(calendar.getTimeInMillis() / 1000);
+
+                mPlayerViewModel.updateAll(playerList);
+            }
+
             if (warLog.size() > 0) {
-                Log.i("WARLOG", warLog.get(0).toString());
-                ClanWarLog clanWarLog = warLog.get(0);
+                for (int i = warLog.size()-1; i > -1; i--) {
+                    ClanWarLog clanWarLog = warLog.get(i);
+                    // Log.i("WARLOG", clanWarLog.toString());
 
-                if (clanWarLog.getCreatedDate() > prefManager.getClanWarTime()) {
+                    if (clanWarLog.getCreatedDate() > prefManager.getClanWarTime()) {
 
-                    List<Player> mPlayers = playerList;
+                        List<Player> mPlayers = playerList;
 
-                    List<Participant> participants = clanWarLog.getParticipants();
+                        List<Participant> participants = clanWarLog.getParticipants();
 
-                    for (Player player :
-                            mPlayers) {
-                        for (Participant participant: participants) {
-                            if (participant.getTag().equals(player.getTag())) {
-                                if (participant.getBattlesPlayed() == 0) {
-                                    player.setClanFails(player.getClanFails() + 1);
+                        for (Player player :
+                                mPlayers) {
+                            for (Participant participant : participants) {
+                                if (participant.getTag().equals(player.getTag())) {
+                                    if (participant.getBattlesPlayed() == 0) {
+                                        player.setClanFails(player.getClanFails() + 1);
+                                    }
+                                    break;
                                 }
-                                break;
                             }
                         }
+
+                        mPlayerViewModel.updateAll(mPlayers);
+                        prefManager.setClanWarTime(clanWarLog.getCreatedDate());
                     }
-
-                    mPlayerViewModel.updateAll(mPlayers);
-
-                    //new PlayerRepository(getApplication()).updateAll(mPlayers);
-
-                    prefManager.setClanWarTime(clanWarLog.getCreatedDate());
                 }
             } else {
-                Toast.makeText(getApplicationContext(), "Clan doesn't have a War log yet.", Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), getResources().getString(R.string.clanWarLog), Toast.LENGTH_LONG).show();
             }
 
             if (mDialog.isShowing()) {
@@ -215,9 +329,9 @@ public class MainActivity extends AppCompatActivity
     private final Response.ErrorListener onWarlogError = new Response.ErrorListener() {
         @Override
         public void onErrorResponse(VolleyError error) {
-            Log.e("PostActivity", error.toString());
+            Log.e("Error_clan_fails", error.toString());
 
-            Toast.makeText(getApplicationContext(), "Error, try again.", Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), getResources().getString(R.string.error), Toast.LENGTH_LONG).show();
 
             if (mDialog.isShowing()) {
                 mDialog.dismiss();
@@ -227,20 +341,20 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
             AlertDialog.Builder alert = new AlertDialog.Builder(this);
-            alert.setTitle("Do you want to exit?");
+            alert.setTitle(getResources().getString(R.string.exitTitle));
 
-            alert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            alert.setPositiveButton(getResources().getString(R.string.exitConfirm), new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int whichButton) {
                     System.exit(0);
                 }
             });
 
-            alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            alert.setNegativeButton(getResources().getString(R.string.exitCancel), new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int whichButton) {
 
                 }
@@ -272,9 +386,8 @@ public class MainActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
     @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
@@ -299,7 +412,7 @@ public class MainActivity extends AppCompatActivity
                 break;
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }

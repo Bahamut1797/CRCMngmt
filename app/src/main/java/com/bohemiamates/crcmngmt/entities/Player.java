@@ -13,6 +13,7 @@ import android.support.annotation.NonNull;
                 childColumns = "clanTag"))
 public class Player {
 
+    @SuppressWarnings("NullableProblems")
     @PrimaryKey
     @NonNull
     private String tag;
@@ -29,11 +30,12 @@ public class Player {
     private int clanFails;
     private String clanBadgeUri;
 
+    @NonNull
     public String getTag() {
         return tag;
     }
 
-    public void setTag(String tag) {
+    public void setTag(@NonNull String tag) {
         this.tag = tag;
     }
 
