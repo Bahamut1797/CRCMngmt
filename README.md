@@ -5,8 +5,7 @@ CR - Clan Management is a clan management for Clash Royale to get a full view of
 
 ## Features
 
-- Show the member of a clan, their donations at week, current trophies and skipped wars* count.
-*If the member participated in Collection Day and on War Day the member no participate on war it count as Skipped War. It reset every month.
+- Show the member of a clan, their donations at week, current trophies and skipped wars count. If the member participated in Collection Day and on War Day the member no participate on war it count as Skipped War. It reset every month.
 - Order the member list by Trophies, Skipped Wars or Donations.
 - Search for other clans you want to manage and switch between them.
 - [**Next update**] Show individual information for every member of the clan.
