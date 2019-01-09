@@ -32,14 +32,14 @@
                 android:text="@string/txtSearchClan" />
 
             <EditText
-                tools:ignore="Autofill"
+                tools:ignore="AutoFill"
                 android:id="@+id/txtClanTag"
                 android:layout_width="130dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
                 android:hint="@string/txtHint"
                 android:ems="10"
-                android:inputType="text" />
+                android:inputType="textCapCharacters" />
 
             <Button
                 android:id="@+id/btnGetClan"

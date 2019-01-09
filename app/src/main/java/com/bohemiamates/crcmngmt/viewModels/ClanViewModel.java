@@ -23,7 +23,15 @@ public class ClanViewModel extends AndroidViewModel {
         return mClanRepository.getClan(clanTag);
     }
 
-    public void insert(Clan clan) { mClanRepository.insert(clan); }
+    public LiveData<List<Clan>> getAllClans() {
+        return mClanRepository.getAllClans();
+    }
 
-    public void update(Clan clan) { mClanRepository.update(clan); }
+    public void insert(Clan clan) {
+        mClanRepository.insert(clan);
+    }
+
+    public void update(Clan clan) {
+        mClanRepository.update(clan);
+    }
 }

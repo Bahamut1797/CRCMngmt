@@ -24,23 +24,32 @@ public class PlayerRepository {
         return mPlayerDao.loadAllPlayers(clanTag);
     }
 
+    public LiveData<List<Player>> getPlayersByFails(String clanTag) {
+        return mPlayerDao.loadAllPlayersByFails(clanTag);
+    }
+
+    public LiveData<List<Player>> getPlayersByDonation(String clanTag) {
+        return mPlayerDao.loadAllPlayersByDonation(clanTag);
+    }
+
     public LiveData<Player> getPlayer(String tag) {
         return mPlayerDao.loadPlayer(tag);
     }
 
     public void insertAll(List<Player> players) {
-        for (Player player:
-             players) {
+        for (Player player :
+                players) {
             new InsertAsyncTask(mPlayerDao).execute(player);
         }
     }
+
     public void insert(Player player) {
         new InsertAsyncTask(mPlayerDao).execute(player);
 
     }
 
     public void updateAll(List<Player> players) {
-        for (Player player:
+        for (Player player :
                 players) {
             new UpdateAsyncTask(mPlayerDao).execute(player);
         }
@@ -55,7 +64,7 @@ public class PlayerRepository {
     }
 
 
-    public static class InsertAsyncTask extends AsyncTask<Player, Void, Void>{
+    public static class InsertAsyncTask extends AsyncTask<Player, Void, Void> {
 
         private PlayerDao mAsyncTaskDao;
 
@@ -74,7 +83,7 @@ public class PlayerRepository {
         }
     }
 
-    public static class UpdateAsyncTask extends AsyncTask<Player, Void, Void>{
+    public static class UpdateAsyncTask extends AsyncTask<Player, Void, Void> {
 
         private PlayerDao mAsyncTaskDao;
 
@@ -93,7 +102,7 @@ public class PlayerRepository {
         }
     }
 
-    public static class DeleteAsyncTask extends AsyncTask<Player, Void, Void>{
+    public static class DeleteAsyncTask extends AsyncTask<Player, Void, Void> {
 
         private PlayerDao mAsyncTaskDao;
 

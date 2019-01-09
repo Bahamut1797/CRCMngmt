@@ -35,7 +35,7 @@ public class PlayerInfoActivity extends AppCompatActivity {
             @Override
             public void onChanged(@Nullable final Player player) {
                 if (player != null) {
-                    Toast.makeText(getApplicationContext(), player.toString(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "#" + player.getClanFails(), Toast.LENGTH_SHORT).show();
                     TextView txtName = findViewById(R.id.inf_playername);
                     txtName.setText(player.getName());
                 }

@@ -23,17 +23,31 @@ public class PlayerViewModel extends AndroidViewModel {
         return mPlayerRepository.getPlayers(clanTag);
     }
 
+    public LiveData<List<Player>> getAllPlayersByFails(String clanTag) {
+        return mPlayerRepository.getPlayersByFails(clanTag);
+    }
+
+    public LiveData<List<Player>> getAllPlayersByDonation(String clanTag) {
+        return mPlayerRepository.getPlayersByDonation(clanTag);
+    }
+
     public LiveData<Player> getPlayer(String tag) {
         return mPlayerRepository.getPlayer(tag);
     }
 
-    public void insertAll(List<Player> player) { mPlayerRepository.insertAll(player); }
+    public void updateAll(List<Player> player) {
+        mPlayerRepository.updateAll(player);
+    }
 
-    public void updateAll(List<Player> player) { mPlayerRepository.updateAll(player); }
+    public void update(Player player) {
+        mPlayerRepository.update(player);
+    }
 
-    public void update(Player player) { mPlayerRepository.update(player); }
+    public void insert(Player player) {
+        mPlayerRepository.insert(player);
+    }
 
-    public void insert(Player player) { mPlayerRepository.insert(player); }
-
-    public void delete(Player player) { mPlayerRepository.delete(player); }
+    public void delete(Player player) {
+        mPlayerRepository.delete(player);
+    }
 }

@@ -1,20 +1,31 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <string name="key" tools:ignore="TypographyDashes">eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTUzMCwiaWRlbiI6IjQ3MjA3MTUzMjUxMjkzNTk1NiIsIm1kIjp7fSwidHMiOjE1MzQ4NjM2OTY4Mzh9.G391OKyRmWbOZ1mZRaxz--rN7yaM1J6NaAV-tDb-TQ4</string>
+    <string name="key" tools:ignore="TypographyDashes">HERE YOUR API KEY</string>
     <string name="url">https://api.royaleapi.com/</string>
 
     <string name="app_name">CR - Clan Management</string>
+    <string name="app_search_clan">Buscar Nuevo Clan</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="nav_header_title">Android Studio</string>
     <string name="nav_header_subtitle">android.studio@android.com</string>
     <string name="nav_header_desc">Navigation header</string>
-    <string name="action_settings">Settings</string>
+    <string name="action_settings">Ordenar Por</string>
     <string name="imgClanDesc">Clan Icono</string>
 
+    <!-- Navigation Menu -->
+    <string name="nav_information">Información</string>
+    <string name="nav_about">Acerca de</string>
+    <string name="nav_search">Buscar nuevo Clan</string>
+    <string name="nav_statistics">Estadísticas - Pronto</string>
+    <string name="nav_home">Página Principal</string>
+
     <!-- Start activity -->
-    <string name="txtSearchClan">Buscar Clan</string>
-    <string name="txtHint">Clan Tag</string>
+    <string name="txtSearchClan">Buscar Clan:</string>
+    <string name="txtHint">RY8JVV</string>
     <string name="btnGetClan">Obtener Clan</string>
+    <string name="pleaseWait">Por favor espera…</string>
+    <string name="clanNotWarLog">El Clan no tiene un Registro de Guerra aún, obteniendo miembros…</string>
+    <string name="errorClan">El Clan tal vez no existe, intenta nuevamente.</string>
 
     <!-- MainActivity -->
     <string name="refreshData">Refrescando datos…</string>
@@ -23,11 +34,13 @@
     <string name="exitTitle">¿Quieres salir?</string>
     <string name="exitConfirm">Si</string>
     <string name="exitCancel">Cancelar</string>
-
-    <!-- StartActivity -->
-    <string name="pleaseWait">Por favor espera…</string>
-    <string name="clanNotWarLog">El Clan no tiene un Registro de Guerra aún, obteniendo miembros…</string>
-    <string name="errorClan">El Clan tal vez no existe, intenta nuevamente.</string>
+    <string name="orderTitle">Ordenar lista por:</string>
+    <array name="orderBy">
+        <item>Trofeos</item>
+        <item>Guerras Omitidas</item>
+        <item>Donaciones</item>
+    </array>
+    <string name="updated">Miembros actualizados.</string>
 
     <!-- RecyclerView_item -->
     <string name="imgIconDesc">Logo</string>
@@ -62,4 +75,20 @@
     <string name="slide_4_desc">Book tickets of any transportation and travel the world!</string>
     <string name="title_activity_main2">Main2Activity</string>
 
+    <!--AboutActivity-->
+    <string name="glideURL"><a href="https://github.com/bumptech/glide">Glide</a></string>
+    <string name="tooltipURL"><a href="https://github.com/douglasjunior/android-simple-tooltip">Android Simple Tooltip</a></string>
+    <string name="app_version">Versión: 1.0.0</string>
+    <string name="libraries">Librerías de Código Abierto</string>
+    <string name="contact">Información de Contacto</string>
+    <string name="developer">Desarrollador: <a href="https://github.com/Bahamut1797">Jorge Ruiz</a></string>
+
+    <!--SearchClanActivity-->
+    <string name="loadClan">¿Quieres cargar el clan \"</string>
+    <string name="deleteClan">¿Quieres borrar el clan \"</string>
+    <string name="load">Cargar</string>
+    <string name="delete">Borrar</string>
+    <string name="loadCancel">Cancelar</string>
+    <string name="current">Clan actual:</string>
+    <string name="savedClans">Clanes guardados:</string>
 </resources>

@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +17,12 @@ import com.bohemiamates.crcmngmt.activities.PlayerInfoActivity;
 import com.bohemiamates.crcmngmt.entities.Player;
 import com.bumptech.glide.Glide;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
+
+import io.github.douglasjunior.androidSimpleTooltip.SimpleTooltip;
 
 public class PlayerListAdapter extends RecyclerView.Adapter<PlayerListAdapter.PlayerViewHolder> {
 
@@ -66,21 +71,20 @@ public class PlayerListAdapter extends RecyclerView.Adapter<PlayerListAdapter.Pl
             @Override
             public void onClick(View v) {
                 TextView mPlayerTag = v.findViewById(R.id.rv_playertag);
-                Log.i("onClick", mPlayerTag.getText().toString());
 
                 Context c = v.getContext();
                 Intent i = new Intent(c, PlayerInfoActivity.class);
                 i.putExtra("TAG", mPlayerTag.getText().toString());
-                c.startActivity(i);
+                //c.startActivity(i);
             }
         });
         return new PlayerViewHolder(itemView);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull PlayerViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final PlayerViewHolder holder, int position) {
         if (mPlayers != null) {
-            Player current = mPlayers.get(position);
+            final Player current = mPlayers.get(position);
 
             Glide.with(mContext)
                     .load(current.getClanBadgeUri())
@@ -110,27 +114,154 @@ public class PlayerListAdapter extends RecyclerView.Adapter<PlayerListAdapter.Pl
             holder.mPlayerTrophies.setText(String.valueOf(current.getTrophies()));
             holder.mPlayerDonations.setText(String.valueOf(current.getDonations()));
 
+            holder.mFail1.setImageResource(0);
+            holder.mFail2.setImageResource(0);
+            holder.mFail3.setImageResource(0);
+
+            holder.mFail1.setOnClickListener(null);
+            holder.mFail2.setOnClickListener(null);
+            holder.mFail3.setOnClickListener(null);
+
             switch (current.getClanFails()) {
                 case 0:
                     holder.mLinearLayout.setBackgroundResource(R.drawable.normal_grad);
-                    holder.mFail1.setImageResource(0);
-                    holder.mFail2.setImageResource(0);
-                    holder.mFail3.setImageResource(0);
                     break;
                 case 1:
                     holder.mLinearLayout.setBackgroundResource(R.drawable.precaution_grad);
                     holder.mFail1.setImageResource(R.drawable.ic_close_24dp_red);
+
+                    holder.mFail1.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Calendar c = Calendar.getInstance();
+                            c.setTimeInMillis(current.getDateFail1());
+
+                            SimpleDateFormat format1 = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
+
+                            String formatted = format1.format(c.getTime());
+
+                            new SimpleTooltip.Builder(mContext)
+                                    .anchorView(holder.mFail1)
+                                    .text(formatted)
+                                    .gravity(Gravity.TOP)
+                                    .transparentOverlay(true)
+                                    .build()
+                                    .show();
+                        }
+                    });
+
                     break;
                 case 2:
-                    holder.mLinearLayout.setBackgroundResource(R.drawable.warning_grad);
+                    //holder.mLinearLayout.setBackgroundResource(R.drawable.warning_grad);
+                    holder.mLinearLayout.setBackgroundResource(R.drawable.precaution_grad);
                     holder.mFail1.setImageResource(R.drawable.ic_close_24dp_red);
                     holder.mFail2.setImageResource(R.drawable.ic_close_24dp_red);
+
+                    holder.mFail1.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Calendar c = Calendar.getInstance();
+                            c.setTimeInMillis(current.getDateFail1());
+                            SimpleDateFormat format1 = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
+
+                            String formatted = format1.format(c.getTime());
+
+                            new SimpleTooltip.Builder(mContext)
+                                    .anchorView(holder.mFail1)
+                                    .text(formatted)
+                                    .gravity(Gravity.TOP)
+                                    .transparentOverlay(true)
+                                    .build()
+                                    .show();
+                        }
+                    });
+
+                    holder.mFail2.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Calendar c = Calendar.getInstance();
+                            c.setTimeInMillis(current.getDateFail2());
+
+                            SimpleDateFormat format1 = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
+
+                            String formatted = format1.format(c.getTime());
+
+                            new SimpleTooltip.Builder(mContext)
+                                    .anchorView(holder.mFail2)
+                                    .text(formatted)
+                                    .gravity(Gravity.TOP)
+                                    .transparentOverlay(true)
+                                    .build()
+                                    .show();
+                        }
+                    });
                     break;
                 default:
-                    holder.mLinearLayout.setBackgroundResource(R.drawable.danger_grad);
+                    //holder.mLinearLayout.setBackgroundResource(R.drawable.danger_grad);
+                    holder.mLinearLayout.setBackgroundResource(R.drawable.precaution_grad);
                     holder.mFail1.setImageResource(R.drawable.ic_close_24dp_red);
                     holder.mFail2.setImageResource(R.drawable.ic_close_24dp_red);
                     holder.mFail3.setImageResource(R.drawable.ic_close_24dp_red);
+
+                    holder.mFail1.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Calendar c = Calendar.getInstance();
+                            c.setTimeInMillis(current.getDateFail1());
+
+                            SimpleDateFormat format1 = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
+
+                            String formatted = format1.format(c.getTime());
+
+                            new SimpleTooltip.Builder(mContext)
+                                    .anchorView(holder.mFail1)
+                                    .text(formatted)
+                                    .gravity(Gravity.TOP)
+                                    .transparentOverlay(true)
+                                    .build()
+                                    .show();
+                        }
+                    });
+
+                    holder.mFail2.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Calendar c = Calendar.getInstance();
+                            c.setTimeInMillis(current.getDateFail2());
+
+                            SimpleDateFormat format1 = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
+
+                            String formatted = format1.format(c.getTime());
+
+                            new SimpleTooltip.Builder(mContext)
+                                    .anchorView(holder.mFail2)
+                                    .text(formatted)
+                                    .gravity(Gravity.TOP)
+                                    .transparentOverlay(true)
+                                    .build()
+                                    .show();
+                        }
+                    });
+
+                    holder.mFail3.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Calendar c = Calendar.getInstance();
+                            c.setTimeInMillis(current.getDateFail3());
+
+                            SimpleDateFormat format1 = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
+
+                            String formatted = format1.format(c.getTime());
+
+                            new SimpleTooltip.Builder(mContext)
+                                    .anchorView(holder.mFail3)
+                                    .text(formatted)
+                                    .gravity(Gravity.TOP)
+                                    .transparentOverlay(true)
+                                    .build()
+                                    .show();
+                        }
+                    });
             }
         } else {
             // Covers the case of data not being ready yet.
@@ -144,10 +275,11 @@ public class PlayerListAdapter extends RecyclerView.Adapter<PlayerListAdapter.Pl
     public int getItemCount() {
         if (mPlayers != null)
             return mPlayers.size();
-        else return 0;
+        else
+            return 0;
     }
 
-    public void setPlayers(List<Player> players){
+    public void setPlayers(List<Player> players) {
         mPlayers = players;
         notifyDataSetChanged();
     }

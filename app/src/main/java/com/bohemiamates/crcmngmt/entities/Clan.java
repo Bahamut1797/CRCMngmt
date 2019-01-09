@@ -21,6 +21,7 @@ public class Clan {
     private int memberCount;
     private int requiredScore;
     private int donations;
+    private long lastWarTime;
     @Embedded
     private Badge badge;
 
@@ -105,6 +106,14 @@ public class Clan {
         this.donations = donations;
     }
 
+    public long getLastWarTime() {
+        return lastWarTime;
+    }
+
+    public void setLastWarTime(long lastWarTime) {
+        this.lastWarTime = lastWarTime;
+    }
+
     public Badge getBadge() {
         return badge;
     }
@@ -124,6 +133,7 @@ public class Clan {
                 ", memberCount=" + memberCount +
                 ", requiredScore=" + requiredScore +
                 ", donations=" + donations +
+                ", lastWarTime=" + lastWarTime +
                 ", badge=" + badge +
                 '}';
     }
