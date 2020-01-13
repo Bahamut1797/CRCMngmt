@@ -28,4 +28,22 @@
         <item name="android:layout_marginTop">2dp</item>
     </style>
 
+    <style name="player_name">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">22sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:paddingLeft">2dp</item>
+        <item name="android:layout_marginTop">2dp</item>
+        <item name="android:fontFamily">@font/cousine</item>
+    </style>
+
+    <style name="word_warlog">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">22sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:paddingLeft">8dp</item>
+    </style>
+
 </resources>

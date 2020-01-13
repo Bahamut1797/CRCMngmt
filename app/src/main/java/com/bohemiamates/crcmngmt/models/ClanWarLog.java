@@ -3,19 +3,19 @@ package com.bohemiamates.crcmngmt.models;
 import java.util.List;
 
 public class ClanWarLog {
-    private long createdDate;
+    private String warEndTime;
     private List<Participant> participants;
 
     public ClanWarLog() {
 
     }
 
-    public long getCreatedDate() {
-        return createdDate;
+    public String getWarEndTime() {
+        return warEndTime;
     }
 
-    public void setCreatedDate(long createdDate) {
-        this.createdDate = createdDate;
+    public void setWarEndTime(String warEndTime) {
+        this.warEndTime = warEndTime;
     }
 
     public List<Participant> getParticipants() {
@@ -29,7 +29,7 @@ public class ClanWarLog {
     @Override
     public String toString() {
         return "ClanWarLog{" +
-                "createdDate=" + createdDate +
+                "warEndTime=" + warEndTime +
                 ", participants=" + participants +
                 '}';
     }

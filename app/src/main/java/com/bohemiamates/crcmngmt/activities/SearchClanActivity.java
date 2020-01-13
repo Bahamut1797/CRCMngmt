@@ -2,16 +2,18 @@ package com.bohemiamates.crcmngmt.activities;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModelProviders;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 import android.content.Intent;
-import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
+import androidx.annotation.Nullable;
+
+import com.bohemiamates.crcmngmt.other.TimeConverter;
+import com.google.android.material.snackbar.Snackbar;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -78,7 +80,7 @@ public class SearchClanActivity extends AppCompatActivity {
 
         // ClanViewModel
         ClanViewModel mClanViewModel = ViewModelProviders.of(this).get(ClanViewModel.class);
-        LiveData<List<Clan>> listClans = mClanViewModel.getAllClans();
+        final LiveData<List<Clan>> listClans = mClanViewModel.getAllClans();
         listClans.observe(this, new Observer<List<Clan>>() {
             @Override
             public void onChanged(@Nullable final List<Clan> clans) {
@@ -126,7 +128,11 @@ public class SearchClanActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-
+                for (Clan clan : listAllClans)
+                    if (txtClanTag.getText().toString().toUpperCase().equals(clan.getTag())) {
+                        btnGetSearchClan.setEnabled(false);
+                        break;
+                    }
             }
         });
     }
@@ -190,7 +196,8 @@ public class SearchClanActivity extends AppCompatActivity {
             warLog = new Gson().fromJson(response, listType);
 
             if (warLog.size() > 0) {
-                prefManager.setClanWarTime(warLog.get(0).getCreatedDate());
+                long clanWarTime = TimeConverter.UTCDateTime(warLog.get(0).getWarEndTime());
+                prefManager.setClanWarTime(clanWarTime);
             } else {
                 Toast.makeText(getApplicationContext(), getResources().getString(R.string.clanNotWarLog), Toast.LENGTH_SHORT).show();
             }
@@ -258,7 +265,8 @@ public class SearchClanActivity extends AppCompatActivity {
             for (int i = warLog.size() - 1; i > -1; i--) {
                 ClanWarLog clanWarLog = warLog.get(i);
 
-                calendar.setTimeInMillis(clanWarLog.getCreatedDate() * 1000);
+                long clanWarTime = TimeConverter.UTCDateTime(clanWarLog.getWarEndTime());
+                calendar.setTimeInMillis(clanWarTime);
                 // Log.i("WARLOG_TIME", calendar.get(Calendar.YEAR) + "-" + calendar.get(Calendar.MONTH) + "-" + calendar.get(Calendar.DAY_OF_MONTH));
                 int warLogMonth = calendar.get(Calendar.MONTH);
                 int warLogYear = calendar.get(Calendar.YEAR);
@@ -272,13 +280,22 @@ public class SearchClanActivity extends AppCompatActivity {
                                 if (participant.getTag().equals(player.getTag())) {
                                     if (participant.getBattlesPlayed() == 0) {
                                         player.setClanFails(player.getClanFails() + 1);
+                                        player.setTotalFailsMonth(player.getTotalFailsMonth() + 1);
 
                                         if (player.getDateFail1() == 0) {
-                                            player.setDateFail1(clanWarLog.getCreatedDate() * 1000L);
+                                            player.setDateFail1(clanWarTime);
                                         } else if (player.getDateFail2() == 0) {
-                                            player.setDateFail2(clanWarLog.getCreatedDate() * 1000L);
+                                            player.setDateFail2(clanWarTime);
                                         } else if (player.getDateFail3() == 0) {
-                                            player.setDateFail3(clanWarLog.getCreatedDate() * 1000L);
+                                            player.setDateFail3(clanWarTime);
+                                        }
+                                    } else {
+                                        if (participant.getWins() == participant.getBattlesPlayed()) {
+                                            player.setTotalWinsMonth(player.getTotalWinsMonth() + participant.getWins());
+                                        } else {
+                                            int losses = participant.getBattlesPlayed() - participant.getWins();
+                                            player.setTotalWinsMonth(player.getTotalWinsMonth() + participant.getWins());
+                                            player.setTotalFailsMonth(player.getTotalFailsMonth() + losses);
                                         }
                                     }
                                     break;
@@ -296,6 +313,8 @@ public class SearchClanActivity extends AppCompatActivity {
             if (mDialog.isShowing()) {
                 mDialog.dismiss();
             }
+
+            prefManager.setFirstBattlesInit(true);
 
             Intent intent = new Intent(getApplicationContext(), MainActivity.class);
 

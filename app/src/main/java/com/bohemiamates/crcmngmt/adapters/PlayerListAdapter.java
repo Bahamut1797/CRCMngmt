@@ -2,8 +2,10 @@ package com.bohemiamates.crcmngmt.adapters;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,6 +38,7 @@ public class PlayerListAdapter extends RecyclerView.Adapter<PlayerListAdapter.Pl
         private final ImageView mFail1;
         private final ImageView mFail2;
         private final ImageView mFail3;
+        private final TextView mRank;
         private final LinearLayout mLinearLayout;
 
         private PlayerViewHolder(View itemView) {
@@ -50,6 +53,7 @@ public class PlayerListAdapter extends RecyclerView.Adapter<PlayerListAdapter.Pl
             mFail1 = itemView.findViewById(R.id.fail_1);
             mFail2 = itemView.findViewById(R.id.fail_2);
             mFail3 = itemView.findViewById(R.id.fail_3);
+            mRank = itemView.findViewById(R.id.rv_rank);
             mLinearLayout = itemView.findViewById(R.id.rc_background);
         }
     }
@@ -75,7 +79,7 @@ public class PlayerListAdapter extends RecyclerView.Adapter<PlayerListAdapter.Pl
                 Context c = v.getContext();
                 Intent i = new Intent(c, PlayerInfoActivity.class);
                 i.putExtra("TAG", mPlayerTag.getText().toString());
-                //c.startActivity(i);
+                c.startActivity(i);
             }
         });
         return new PlayerViewHolder(itemView);
@@ -94,6 +98,10 @@ public class PlayerListAdapter extends RecyclerView.Adapter<PlayerListAdapter.Pl
             String playerTag = "#" + current.getTag();
 
             holder.mPlayerName.setText(current.getName());
+
+            if (current.getName().length() > 12)
+                holder.mPlayerName.setTextSize(TypedValue.COMPLEX_UNIT_SP, 19);
+
             holder.mPlayerTag.setText(playerTag);
 
             switch (current.getRole()) {
@@ -198,7 +206,7 @@ public class PlayerListAdapter extends RecyclerView.Adapter<PlayerListAdapter.Pl
                     break;
                 default:
                     //holder.mLinearLayout.setBackgroundResource(R.drawable.danger_grad);
-                    holder.mLinearLayout.setBackgroundResource(R.drawable.precaution_grad);
+                    holder.mLinearLayout.setBackgroundResource(R.drawable.danger_grad);
                     holder.mFail1.setImageResource(R.drawable.ic_close_24dp_red);
                     holder.mFail2.setImageResource(R.drawable.ic_close_24dp_red);
                     holder.mFail3.setImageResource(R.drawable.ic_close_24dp_red);
@@ -262,6 +270,26 @@ public class PlayerListAdapter extends RecyclerView.Adapter<PlayerListAdapter.Pl
                                     .show();
                         }
                     });
+            }
+
+            holder.mRank.setText(String.valueOf(current.getRank()));
+            holder.mRank.setOnClickListener(null);
+            holder.mPlayerTrophies.setOnClickListener(null);
+            holder.mPlayerDonations.setOnClickListener(null);
+
+            switch (current.getRank()) {
+                case 1:
+                    holder.mRank.setBackgroundResource(R.drawable.first_place);
+                    break;
+                case 2:
+                    holder.mRank.setBackgroundResource(R.drawable.second_place);
+                    break;
+                case 3:
+                    holder.mRank.setBackgroundResource(R.drawable.third_place);
+                    break;
+                default:
+                    holder.mRank.setBackgroundResource(R.drawable.nth_place);
+                    break;
             }
         } else {
             // Covers the case of data not being ready yet.

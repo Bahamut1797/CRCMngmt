@@ -1,12 +1,15 @@
 package com.bohemiamates.crcmngmt.entities;
 
-import android.arch.persistence.room.Entity;
-import android.arch.persistence.room.ForeignKey;
-import android.arch.persistence.room.Index;
-import android.arch.persistence.room.PrimaryKey;
-import android.support.annotation.NonNull;
+import androidx.room.Embedded;
+import androidx.room.Entity;
+import androidx.room.ForeignKey;
+import androidx.room.Index;
+import androidx.room.PrimaryKey;
+import androidx.annotation.NonNull;
 
-import static android.arch.persistence.room.ForeignKey.CASCADE;
+import com.bohemiamates.crcmngmt.models.Arena;
+
+import static androidx.room.ForeignKey.CASCADE;
 
 @Entity(tableName = "players",
         indices = {@Index(value = "clanTag")},
@@ -39,6 +42,11 @@ public class Player {
     private int totalFails;
     private int totalWinsMonth;
     private int totalFailsMonth;
+    private String battleLog;
+    @Embedded(prefix = "arena_")
+    private Arena arena;
+    //private int clanCardsCollected;
+    //private int warDayWins;
 
     @NonNull
     public String getTag() {
@@ -200,4 +208,36 @@ public class Player {
     public void setTotalFailsMonth(int totalFailsMonth) {
         this.totalFailsMonth = totalFailsMonth;
     }
+
+    public String getBattleLog() {
+        return battleLog;
+    }
+
+    public void setBattleLog(String battleLog) {
+        this.battleLog = battleLog;
+    }
+
+    public Arena getArena() {
+        return arena;
+    }
+
+    public void setArena(Arena arena) {
+        this.arena = arena;
+    }
+
+    /*public int getClanCardsCollected() {
+        return clanCardsCollected;
+    }
+
+    public void setClanCardsCollected(int clanCardsCollected) {
+        this.clanCardsCollected = clanCardsCollected;
+    }
+
+    public int getWarDayWins() {
+        return warDayWins;
+    }
+
+    public void setWarDayWins(int warDayWins) {
+        this.warDayWins = warDayWins;
+    }*/
 }

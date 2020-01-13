@@ -1,8 +1,8 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <string name="key" tools:ignore="TypographyDashes">HERE YOUR API KEY</string>
+    <string name="key" tools:ignore="TypographyDashes" translatable="false">HERE YOUR API KEY</string>
     <string name="url">https://api.royaleapi.com/</string>
 
-    <string name="app_name">CR - Clan Management</string>
+    <string name="app_name" translatable="false">CR - Clan Management</string>
     <string name="app_search_clan">Search New Clan</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -50,6 +50,7 @@
     <string name="txtTrophies">Trophies: </string>
     <string name="txtDonations">/Week</string>
     <string name="txtFails">Skipped Wars: </string>
+
     <!-- PlayerListAdapter -->
     <string name="leader">Leader</string>
     <string name="coLeader">Co-Leader</string>
@@ -57,31 +58,13 @@
     <string name="member">Member</string>
     <string name="noPlayers">No Players</string>
 
-    <!-- Slider Intro -->
-    <string name="next">NEXT</string>
-    <string name="skip">SKIP</string>
-    <string name="start">GOT IT</string>
-
-    <string name="slide_1_title">Hello Food!</string>
-    <string name="slide_1_desc">The easiest way to order food from your favourite restaurant!</string>
-
-    <string name="slide_2_title">Movie Tickets</string>
-    <string name="slide_2_desc">Book movie tickets for your family and friends!</string>
-
-    <string name="slide_3_title">Great Discounts</string>
-    <string name="slide_3_desc">Best discounts on every single service we offer!</string>
-
-    <string name="slide_4_title">World Travel</string>
-    <string name="slide_4_desc">Book tickets of any transportation and travel the world!</string>
-    <string name="title_activity_main2">Main2Activity</string>
-
     <!--AboutActivity-->
     <string name="glideURL"><a href="https://github.com/bumptech/glide">Glide</a></string>
     <string name="tooltipURL"><a href="https://github.com/douglasjunior/android-simple-tooltip">Android Simple Tooltip</a></string>
-    <string name="app_version">Version: 1.0.0</string>
+    <string name="app_version">Version: 1.1.0</string>
     <string name="libraries">Open Source Libraries</string>
     <string name="contact">Contact Information</string>
-    <string name="developer">Developer: <a href="https://github.com/Bahamut1797">Jorge Ruiz</a></string>
+    <string name="developer">Developer: <a href="https://bahamut1797.github.io/">Jorge Ruiz</a></string>
 
     <!--SearchClanActivity-->
     <string name="loadClan">Do you want to load the clan \"</string>
@@ -91,4 +74,18 @@
     <string name="loadCancel">Cancel</string>
     <string name="current">Current Clan:</string>
     <string name="savedClans">Saved clans:</string>
+
+    <!--PlayerInfoActivity-->
+    <string name="na" translatable="false">N/A</string>
+    <string name="stats_title">Player Stats</string>
+    <string name="stats_wars_title">Clan Wars Statistics</string>
+    <string name="winsMonth">Wins/Month:</string>
+    <string name="totalWins">Wins:</string>
+    <string name="lossesMonth">Losses/Month:</string>
+    <string name="totalLosses">Losses:</string>
+    <string name="stats_warlog_title">Clan Wars Log</string>
+    <string name="stats_donation_title">Donations/Weekly</string>
+    <string name="donated">Donated:</string>
+    <string name="received">Received:</string>
+    <string name="percentage">Percentage:</string>
 </resources>

@@ -1,25 +1,32 @@
 package com.bohemiamates.crcmngmt.activities;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.app.ProgressDialog;
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModelProviders;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
+
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+import com.bohemiamates.crcmngmt.other.AlarmReceiver;
+import com.bohemiamates.crcmngmt.other.TimeConverter;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.snackbar.Snackbar;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.appcompat.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -27,6 +34,7 @@ import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
@@ -50,10 +58,12 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity
@@ -190,6 +200,21 @@ public class MainActivity extends AppCompatActivity
         clanDesc = navHeader.findViewById(R.id.clanDesc);
 
         refreshData();
+
+        // Set AlarmManager every day to update clan information in Background
+        Context context = getApplicationContext();
+
+        Intent intent = new Intent(context, AlarmReceiver.class);
+        intent.setAction("com.bohemiamates.crcmngmt.UP_TO_DATE");
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context,
+                0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(System.currentTimeMillis());
+        AlarmManager alarm = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        alarm.cancel(pendingIntent);
+        alarm.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis() + AlarmManager.INTERVAL_HALF_DAY,
+                AlarmManager.INTERVAL_DAY, pendingIntent);
+
         /*scheduleTaskExecutor = Executors.newScheduledThreadPool(5);
 
         // This schedule a task to run every 1 minute:
@@ -300,6 +325,7 @@ public class MainActivity extends AppCompatActivity
                 player.setClanTag(clan.getTag());
                 player.setClanFails(0);
                 player.setClanBadgeUri(clan.getBadge().getImage());
+                player.setBattleLog("");
             }
 
             // Update current members and delete old ones
@@ -311,6 +337,11 @@ public class MainActivity extends AppCompatActivity
                         mCurrent.setDateFail1(current.getDateFail1());
                         mCurrent.setDateFail2(current.getDateFail2());
                         mCurrent.setDateFail3(current.getDateFail3());
+
+                        mCurrent.setTotalWinsMonth(current.getTotalWinsMonth());
+                        mCurrent.setTotalWins(current.getTotalWins());
+                        mCurrent.setTotalFailsMonth(current.getTotalFailsMonth());
+                        mCurrent.setTotalFails(current.getTotalFails());
                         mPlayerViewModel.update(mCurrent);
                         delete = false;
                         break;
@@ -393,6 +424,12 @@ public class MainActivity extends AppCompatActivity
                     current.setDateFail1(0L);
                     current.setDateFail2(0L);
                     current.setDateFail3(0L);
+
+                    current.setTotalFails(current.getTotalFails() + current.getTotalFailsMonth());
+                    current.setTotalFailsMonth(0);
+
+                    current.setTotalWins(current.getTotalWins() + current.getTotalWinsMonth());
+                    current.setTotalWinsMonth(0);
                 }
 
                 calendar.set(currentYear, currentMonth, 1, 0, 0);
@@ -403,11 +440,59 @@ public class MainActivity extends AppCompatActivity
             }
 
             if (warLog.size() > 0) {
+                for (int i = 0; i < warLog.size(); i++) {
+                    ClanWarLog clanWarLog = warLog.get(i);
+
+                    Calendar c = Calendar.getInstance();
+                    long clanWarTime = TimeConverter.UTCDateTime(clanWarLog.getWarEndTime());
+                    c.setTimeInMillis(clanWarTime);
+                    SimpleDateFormat format1 = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
+
+                    String formatted = format1.format(c.getTime());
+
+                    List<Player> mPlayers = playerList;
+
+                    List<Participant> participants = clanWarLog.getParticipants();
+
+                    warLogMonth = c.get(Calendar.MONTH);
+
+                    for (Player player :
+                            mPlayers) {
+                        for (Participant participant : participants) {
+                            if (participant.getTag().equals(player.getTag())) {
+                                player.setBattleLog(player.getBattleLog() + formatted + ":"
+                                        + participant.getBattlesPlayed() + ":"
+                                        + participant.getWins() + "|");
+
+                                if (prefManager.isFirstBattlesInit()) {
+                                    if (warLogMonth != currentMonth) {
+                                        if (participant.getBattlesPlayed() == 0) {
+                                            player.setTotalFails(player.getTotalFails() + 1);
+                                        } else {
+                                            if (participant.getWins() == participant.getBattlesPlayed()) {
+                                                player.setTotalWins(player.getTotalWins() + participant.getWins());
+                                            } else {
+                                                int losses = participant.getBattlesPlayed() - participant.getWins();
+                                                player.setTotalWins(player.getTotalWins() + participant.getWins());
+                                                player.setTotalFails(player.getTotalFails() + losses);
+                                            }
+                                        }
+                                    }
+                                }
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                prefManager.setFirstBattlesInit(false);
+                mPlayerViewModel.updateAll(playerList);
+
                 for (int i = warLog.size() - 1; i > -1; i--) {
                     ClanWarLog clanWarLog = warLog.get(i);
                     // Log.i("WARLOG", clanWarLog.toString());
-
-                    if (clanWarLog.getCreatedDate() > prefManager.getClanWarTime()) {
+                    long clanWarTime = TimeConverter.UTCDateTime(clanWarLog.getWarEndTime());
+                    if (clanWarTime > prefManager.getClanWarTime()) {
 
                         List<Player> mPlayers = playerList;
 
@@ -419,13 +504,22 @@ public class MainActivity extends AppCompatActivity
                                 if (participant.getTag().equals(player.getTag())) {
                                     if (participant.getBattlesPlayed() == 0) {
                                         player.setClanFails(player.getClanFails() + 1);
+                                        player.setTotalFailsMonth(player.getTotalFailsMonth() + 1);
 
                                         if (player.getDateFail1() == 0) {
-                                            player.setDateFail1(clanWarLog.getCreatedDate() * 1000L);
+                                            player.setDateFail1(clanWarTime);
                                         } else if (player.getDateFail2() == 0) {
-                                            player.setDateFail2(clanWarLog.getCreatedDate() * 1000L);
+                                            player.setDateFail2(clanWarTime);
                                         } else if (player.getDateFail3() == 0) {
-                                            player.setDateFail3(clanWarLog.getCreatedDate() * 1000L);
+                                            player.setDateFail3(clanWarTime);
+                                        }
+                                    } else {
+                                        if (participant.getWins() == participant.getBattlesPlayed()) {
+                                            player.setTotalWinsMonth(player.getTotalWinsMonth() + participant.getWins());
+                                        } else {
+                                            int losses = participant.getBattlesPlayed() - participant.getWins();
+                                            player.setTotalWinsMonth(player.getTotalWinsMonth() + participant.getWins());
+                                            player.setTotalFailsMonth(player.getTotalFailsMonth() + losses);
                                         }
                                     }
                                     break;
@@ -434,12 +528,12 @@ public class MainActivity extends AppCompatActivity
                         }
 
                         mPlayerViewModel.updateAll(mPlayers);
-                        prefManager.setClanWarTime(clanWarLog.getCreatedDate());
+                        prefManager.setClanWarTime(clanWarTime);
                     }
                 }
             } else {
-                Snackbar.make(findViewById(R.id.fab), getResources().getString(R.string.clanWarLog), Snackbar.LENGTH_LONG).show();
-                //Toast.makeText(getApplicationContext(), getResources().getString(R.string.clanWarLog), Toast.LENGTH_LONG).show();
+                //Snackbar.make(findViewById(R.id.fab), getResources().getString(R.string.clanWarLog), Snackbar.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), getResources().getString(R.string.clanWarLog), Toast.LENGTH_SHORT).show();
             }
 
             mClan.setLastWarTime(prefManager.getClanWarTime());

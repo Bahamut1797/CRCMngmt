@@ -1,7 +1,8 @@
 package com.bohemiamates.crcmngmt.repositories;
 
 import android.app.Application;
-import android.arch.lifecycle.LiveData;
+import androidx.lifecycle.LiveData;
+import android.content.Context;
 import android.database.sqlite.SQLiteConstraintException;
 import android.os.AsyncTask;
 import android.util.Log;
@@ -20,8 +21,17 @@ public class PlayerRepository {
         mPlayerDao = db.playerDao();
     }
 
+    public PlayerRepository(Context application) {
+        AppDatabase db = AppDatabase.getDatabase(application);
+        mPlayerDao = db.playerDao();
+    }
+
     public LiveData<List<Player>> getPlayers(String clanTag) {
         return mPlayerDao.loadAllPlayers(clanTag);
+    }
+
+    public List<Player> getPlayers2(String clanTag) {
+        return mPlayerDao.getAllPlayers(clanTag);
     }
 
     public LiveData<List<Player>> getPlayersByFails(String clanTag) {
@@ -62,7 +72,6 @@ public class PlayerRepository {
     public void delete(Player player) {
         new DeleteAsyncTask(mPlayerDao).execute(player);
     }
-
 
     public static class InsertAsyncTask extends AsyncTask<Player, Void, Void> {
 

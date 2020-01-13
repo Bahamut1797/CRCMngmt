@@ -1,10 +1,10 @@
 package com.bohemiamates.crcmngmt.daos;
 
-import android.arch.lifecycle.LiveData;
-import android.arch.persistence.room.Dao;
-import android.arch.persistence.room.Insert;
-import android.arch.persistence.room.Query;
-import android.arch.persistence.room.Update;
+import androidx.lifecycle.LiveData;
+import androidx.room.Dao;
+import androidx.room.Insert;
+import androidx.room.Query;
+import androidx.room.Update;
 
 import com.bohemiamates.crcmngmt.entities.Clan;
 
@@ -23,6 +23,9 @@ public interface ClanDao {
 
     @Query("SELECT * FROM clans WHERE tag = :tag")
     LiveData<Clan> loadClan(String tag);
+
+    @Query("SELECT * FROM clans WHERE tag = :tag")
+    Clan getClan(String tag);
 
     @Query("SELECT * FROM clans")
     LiveData<List<Clan>> loadAllClans();

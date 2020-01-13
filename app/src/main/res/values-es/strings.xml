@@ -1,8 +1,6 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
-    <string name="key" tools:ignore="TypographyDashes">HERE YOUR API KEY</string>
+<resources>
     <string name="url">https://api.royaleapi.com/</string>
 
-    <string name="app_name">CR - Clan Management</string>
     <string name="app_search_clan">Buscar Nuevo Clan</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -50,6 +48,7 @@
     <string name="txtTrophies">Trofeos: </string>
     <string name="txtDonations">/Sem. </string>
     <string name="txtFails">Guerras Omitidas: </string>
+
     <!-- PlayerListAdapter -->
     <string name="leader">Líder</string>
     <string name="coLeader">Co-Líder</string>
@@ -57,31 +56,13 @@
     <string name="member">Miembro</string>
     <string name="noPlayers">No hay Jugadores</string>
 
-    <!-- Slider Intro -->
-    <string name="next">SIGUIENTE</string>
-    <string name="skip">SALTAR</string>
-    <string name="start">ENTENDIDO</string>
-
-    <string name="slide_1_title">Hello Food!</string>
-    <string name="slide_1_desc">The easiest way to order food from your favourite restaurant!</string>
-
-    <string name="slide_2_title">Movie Tickets</string>
-    <string name="slide_2_desc">Book movie tickets for your family and friends!</string>
-
-    <string name="slide_3_title">Great Discounts</string>
-    <string name="slide_3_desc">Best discounts on every single service we offer!</string>
-
-    <string name="slide_4_title">World Travel</string>
-    <string name="slide_4_desc">Book tickets of any transportation and travel the world!</string>
-    <string name="title_activity_main2">Main2Activity</string>
-
     <!--AboutActivity-->
     <string name="glideURL"><a href="https://github.com/bumptech/glide">Glide</a></string>
     <string name="tooltipURL"><a href="https://github.com/douglasjunior/android-simple-tooltip">Android Simple Tooltip</a></string>
-    <string name="app_version">Versión: 1.0.0</string>
+    <string name="app_version">Versión: 1.1.0</string>
     <string name="libraries">Librerías de Código Abierto</string>
     <string name="contact">Información de Contacto</string>
-    <string name="developer">Desarrollador: <a href="https://github.com/Bahamut1797">Jorge Ruiz</a></string>
+    <string name="developer">Desarrollador: <a href="https://bahamut1797.github.io/">Jorge Ruiz</a></string>
 
     <!--SearchClanActivity-->
     <string name="loadClan">¿Quieres cargar el clan \"</string>
@@ -91,4 +72,17 @@
     <string name="loadCancel">Cancelar</string>
     <string name="current">Clan actual:</string>
     <string name="savedClans">Clanes guardados:</string>
+
+    <!--PlayerInfoActivity-->
+    <string name="stats_title">Estadísticas</string>
+    <string name="stats_wars_title">Estadísticas de Guerra</string>
+    <string name="winsMonth">Victorias/Mes:</string>
+    <string name="totalWins">Victorias:</string>
+    <string name="lossesMonth">Derrotas/Mes:</string>
+    <string name="totalLosses">Derrotas:</string>
+    <string name="stats_warlog_title">Log de Guerras</string>
+    <string name="stats_donation_title">Donación/Semana</string>
+    <string name="donated">Donado:</string>
+    <string name="received">Recibido:</string>
+    <string name="percentage">Porcentaje:</string>
 </resources>

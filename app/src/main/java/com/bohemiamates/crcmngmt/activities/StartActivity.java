@@ -3,8 +3,10 @@ package com.bohemiamates.crcmngmt.activities;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
+
+import com.bohemiamates.crcmngmt.other.TimeConverter;
+import com.google.android.material.snackbar.Snackbar;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -142,7 +144,8 @@ public class StartActivity extends AppCompatActivity {
             warLog = new Gson().fromJson(response, listType);
 
             if (warLog.size() > 0) {
-                prefManager.setClanWarTime(warLog.get(0).getCreatedDate());
+                long clanWarTime = TimeConverter.UTCDateTime(warLog.get(0).getWarEndTime());
+                prefManager.setClanWarTime(clanWarTime);
             } else {
                 //Snackbar.make(findViewById(R.id.btnGetClan), getResources().getString(R.string.clanNotWarLog), Snackbar.LENGTH_LONG).show();
                 Toast.makeText(getApplicationContext(), getResources().getString(R.string.clanNotWarLog), Toast.LENGTH_SHORT).show();
@@ -212,7 +215,8 @@ public class StartActivity extends AppCompatActivity {
             for (int i = warLog.size() - 1; i > -1; i--) {
                 ClanWarLog clanWarLog = warLog.get(i);
 
-                calendar.setTimeInMillis(clanWarLog.getCreatedDate() * 1000);
+                long clanWarTime = TimeConverter.UTCDateTime(clanWarLog.getWarEndTime());
+                calendar.setTimeInMillis(clanWarTime);
                 // Log.i("WARLOG_TIME", calendar.get(Calendar.YEAR) + "-" + calendar.get(Calendar.MONTH) + "-" + calendar.get(Calendar.DAY_OF_MONTH));
                 int warLogMonth = calendar.get(Calendar.MONTH);
                 int warLogYear = calendar.get(Calendar.YEAR);
@@ -226,13 +230,22 @@ public class StartActivity extends AppCompatActivity {
                                 if (participant.getTag().equals(player.getTag())) {
                                     if (participant.getBattlesPlayed() == 0) {
                                         player.setClanFails(player.getClanFails() + 1);
+                                        player.setTotalFailsMonth(player.getTotalFailsMonth() + 1);
 
                                         if (player.getDateFail1() == 0) {
-                                            player.setDateFail1(clanWarLog.getCreatedDate() * 1000L);
+                                            player.setDateFail1(clanWarTime);
                                         } else if (player.getDateFail2() == 0) {
-                                            player.setDateFail2(clanWarLog.getCreatedDate() * 1000L);
+                                            player.setDateFail2(clanWarTime);
                                         } else if (player.getDateFail3() == 0) {
-                                            player.setDateFail3(clanWarLog.getCreatedDate() * 1000L);
+                                            player.setDateFail3(clanWarTime);
+                                        }
+                                    } else {
+                                        if (participant.getWins() == participant.getBattlesPlayed()) {
+                                            player.setTotalWinsMonth(player.getTotalWinsMonth() + participant.getWins());
+                                        } else {
+                                            int losses = participant.getBattlesPlayed() - participant.getWins();
+                                            player.setTotalWinsMonth(player.getTotalWinsMonth() + participant.getWins());
+                                            player.setTotalFailsMonth(player.getTotalFailsMonth() + losses);
                                         }
                                     }
                                     break;

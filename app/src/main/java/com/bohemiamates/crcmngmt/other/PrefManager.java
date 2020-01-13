@@ -11,8 +11,9 @@ public class PrefManager {
     // Shared preferences file name
     private static final String PREF_NAME = "bohemiamates-welcome";
 
-    private static final String IS_FIRST_TIME_LAUNCH = "IsFirstTimeLaunch";
+    //private static final String IS_FIRST_TIME_LAUNCH = "IsFirstTimeLaunch";
     private static final String IS_FIRST_TIME_CLAN_INIT = "IsFirstTimeClanInit";
+    private static final String IS_FIRST_TIME_BATTLES_INIT = "IsFirstTimeBattlesInit";
     private static final String CLAN_TAG = "ClanTag";
     private static final String CLAN_WAR_TAG = "ClanWar";
     private static final String CURRENT_ORDER_BY = "CurrentOrderBy";
@@ -24,17 +25,26 @@ public class PrefManager {
         editor = pref.edit();
     }
 
-    public void setFirstTimeLaunch(boolean isFirstTime) {
+    /*public void setFirstTimeLaunch(boolean isFirstTime) {
         editor.putBoolean(IS_FIRST_TIME_LAUNCH, isFirstTime);
         editor.commit();
-    }
+    }*/
 
-    public boolean isFirstTimeLaunch() {
+    /*public boolean isFirstTimeLaunch() {
         return pref.getBoolean(IS_FIRST_TIME_LAUNCH, true);
-    }
+    }*/
 
     public void setFirstClanInit(boolean isFirstClanInit) {
         editor.putBoolean(IS_FIRST_TIME_CLAN_INIT, isFirstClanInit);
+        editor.commit();
+    }
+
+    public boolean isFirstBattlesInit() {
+        return pref.getBoolean(IS_FIRST_TIME_BATTLES_INIT, true);
+    }
+
+    public void setFirstBattlesInit(boolean isFirstBattlesInit) {
+        editor.putBoolean(IS_FIRST_TIME_BATTLES_INIT, isFirstBattlesInit);
         editor.commit();
     }
 

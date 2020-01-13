@@ -1,6 +1,6 @@
 package com.bohemiamates.crcmngmt.repositories;
 
-import android.arch.lifecycle.LiveData;
+import androidx.lifecycle.LiveData;
 import android.content.Context;
 import android.database.sqlite.SQLiteConstraintException;
 import android.os.AsyncTask;
@@ -22,6 +22,10 @@ public class ClanRepository {
 
     public LiveData<Clan> getClan(String clanTag) {
         return mClanDao.loadClan(clanTag);
+    }
+
+    public Clan getClan2(String clanTag) {
+        return mClanDao.getClan(clanTag);
     }
 
     public LiveData<List<Clan>> getAllClans() {
