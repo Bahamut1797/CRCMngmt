@@ -41,7 +41,7 @@ Read the [Authentication](https://docs.royaleapi.com/#/authentication?id=key-man
   
 ### Setting API key on code  
   
-Open the files **\CRClanManagement\app\src\main\res\values\strings.xml** and **\CRClanManagement\app\src\main\res\values-es\strings.xml** and change the value for the first String "*HERE YOUR API KEY*" for your API KEY.  
+Open the files **\CRClanManagement\app\src\main\res\values\strings.xml** and change the value for the first String "*HERE YOUR API KEY*" for your API KEY.  
   
 `<string name="key" tools:ignore="TypographyDashes">HERE YOUR API KEY</string>`
 
